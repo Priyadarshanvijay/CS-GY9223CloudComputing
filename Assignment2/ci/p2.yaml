@@ -1,0 +1,140 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Lambdas Pipeline
+Parameters:
+  GitHubRepo:
+    Type: String
+
+  GitHubBranch:
+    Type: String
+
+  GitHubToken:
+    Type: String
+
+  GitHubUser:
+    Type: String
+Resources:
+  LambdaBucket:
+    Type: AWS::S3::Bucket
+
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument: |
+        {
+            "Statement": [{
+                "Effect": "Allow",
+                "Principal": { "Service": [ "codepipeline.amazonaws.com" ]},
+                "Action": [ "sts:AssumeRole" ]
+            }]
+        }
+      Policies:
+        - PolicyName: code-pipeline-policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource:
+                  - !Sub arn:aws:s3:::${LambdaBucket}/*
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketVersioning
+                  - s3:ListObjects
+              - Resource:
+                  - arn:aws:s3:::*
+                Effect: Allow
+                Action:
+                  - s3:ListAllMyBuckets
+              - Resource: "*"
+                Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
+                  - iam:PassRole
+              - Resource: "*"
+                Effect: Allow
+                Action:
+                  - lambda:*
+
+  Lambda1:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code: 
+        S3Bucket: !Ref LambdaBucket
+        S3Key: "lambdas/lf1.zip"
+      Description: Lambda with CF
+      FunctionName: LambdaWithCF
+      Handler: lf1.handler
+      Role: arn:aws:iam::568808643890:role/LambdaRole
+      Runtime: nodejs14.x
+
+  Lambda2:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code: 
+        S3Bucket: !Ref LambdaBucket
+        S3Key: "lambdas/lf2.zip"
+      Description: Lambda with CF
+      FunctionName: LambdaWithCF
+      Handler: lf2.handler
+      Role: arn:aws:iam::568808643890:role/LambdaRole
+      Runtime: nodejs14.x
+
+
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      RoleArn: !GetAtt CodePipelineServiceRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref AssetsBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: App
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: 1
+                Provider: GitHub
+              Configuration:
+                Owner: !Ref GitHubUser
+                Repo: !Ref GitHubRepo
+                Branch: !Ref GitHubBranch
+                OAuthToken: !Ref GitHubToken
+              OutputArtifacts:
+                - Name: App
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: ClientBuildStep
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref ClientBuildProject
+              InputArtifacts:
+                - Name: App
+              OutputArtifacts:
+                - Name: ClientBuild
+              RunOrder: 1
+        - Name: Deploy
+          Actions:
+            - Name: ClientDeployStep
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref DeployClientBuildProject
+              InputArtifacts:
+                - Name: ClientBuild
+              OutputArtifacts:
+                - Name: ClientDeploymentOutput
+              RunOrder: 1
