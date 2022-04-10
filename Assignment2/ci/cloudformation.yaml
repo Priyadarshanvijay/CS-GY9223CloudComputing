@@ -1,0 +1,1599 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Metadata:
+    Generator: "former2"
+Description: ""
+Resources:
+    IAMRole:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/"
+            RoleName: "api-gateway-to-s3"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+              - !Ref IAMManagedPolicy2
+            Description: "Allows API Gateway to s3 upload"
+
+    IAMRole2:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/service-role/"
+            RoleName: !Sub "${LambdaFunction2}-role-clnczi1d"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - !Ref IAMManagedPolicy4
+
+    IAMRole3:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/"
+            RoleName: "lf2-api-gway"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+              - "arn:aws:iam::aws:policy/AWSLambdaExecute"
+              - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              - "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
+            Description: "Allows API Gateway to push logs to CloudWatch Logs."
+
+    IAMRole4:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/service-role/"
+            RoleName: !Sub "${LambdaFunction3}-role-ni79yk7m"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - "arn:aws:iam::aws:policy/AmazonLexFullAccess"
+              - !Ref IAMManagedPolicy11
+
+    IAMRole5:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/service-role/"
+            RoleName: !Sub "${LambdaFunction}-role-xkxwnf8y"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+              - "arn:aws:iam::aws:policy/AmazonRekognitionFullAccess"
+              - !Ref IAMManagedPolicy6
+              - !Ref IAMManagedPolicy12
+
+    IAMServiceLinkedRole:
+        Type: "AWS::IAM::ServiceLinkedRole"
+        Properties:
+            AWSServiceName: "globalaccelerator.amazonaws.com"
+            Description: "Allows Global Accelerator to call AWS services on customer's behalf"
+
+    IAMServiceLinkedRole2:
+        Type: "AWS::IAM::ServiceLinkedRole"
+        Properties:
+            AWSServiceName: "lexv2.amazonaws.com"
+            CustomSuffix: "CQFISCDKQDM"
+
+    IAMServiceLinkedRole3:
+        Type: "AWS::IAM::ServiceLinkedRole"
+        Properties:
+            AWSServiceName: "opensearchservice.amazonaws.com"
+
+    IAMServiceLinkedRole4:
+        Type: "AWS::IAM::ServiceLinkedRole"
+        Properties:
+            AWSServiceName: "ops.apigateway.amazonaws.com"
+            Description: "The Service Linked Role is used by Amazon API Gateway."
+
+    IAMManagedPolicy:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-5813a71d-abf3-4742-b92c-0318c0bcc045"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf0:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy2:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "upload-image-to-s3"
+            Path: "/"
+            PolicyDocument: |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "VisualEditor0",
+                            "Effect": "Allow",
+                            "Action": "s3:PutObject",
+                            "Resource": "arn:aws:s3:::b2-hw2/*"
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy3:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-1c840caa-78e5-42c1-8afb-edc51b028e84"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf1:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy4:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-a802a653-2288-4ef8-8051-f83b0cab193f"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/${LambdaFunction2}:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy5:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-94a17980-336f-411d-a12c-db37f875a356"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf2:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy6:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-e49aee31-0f90-4b39-8695-5326f792b982"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/${LambdaFunction}:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy7:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-18e8a2b7-984f-4c13-a540-b73942565fac"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf1-2:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy8:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-c4140727-1c4f-4795-a15d-2b335cb4523d"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf0-1:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy9:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-f4b93421-ffb3-4323-b09d-b5b04ceb5bec"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf1:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy10:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-a287963b-be6d-4df9-9fbf-d43e78ea9513"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf1:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy11:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-e0f85849-16c8-4d0c-b2bd-017462d3c654"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/${LambdaFunction3}:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy12:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaVPCAccessExecutionRole-8601fe37-fcb0-4634-9e84-2ef684218cab"
+            Path: "/service-role/"
+            PolicyDocument: |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "ec2:CreateNetworkInterface",
+                                "ec2:DeleteNetworkInterface",
+                                "ec2:DescribeNetworkInterfaces"
+                            ],
+                            "Resource": "*"
+                        }
+                    ]
+                }
+
+    LambdaFunction:
+        Type: "AWS::Lambda::Function"
+        Properties:
+            Description: ""
+            FunctionName: !Sub "index-${OpenSearchServiceDomain}"
+            Handler: "index.handler"
+            Architectures: 
+              - "x86_64"
+            Code: 
+                S3Bucket: "prod-04-2014-tasks"
+                S3Key: !Sub "/snapshots/510257897386/index-${OpenSearchServiceDomain}-98506870-5ebb-4ac5-9df0-1e7a7c141c9f"
+                S3ObjectVersion: "bBCxsI5.Q6mI6bXVonMIGomjSwU8RV_P"
+            MemorySize: 512
+            Role: !Sub "arn:aws:iam::510257897386:role/service-role/index-${OpenSearchServiceDomain}-role-xkxwnf8y"
+            Runtime: "nodejs14.x"
+            Timeout: 195
+            TracingConfig: 
+                Mode: "PassThrough"
+            Layers: 
+              - !Sub "arn:aws:lambda:${AWS::Region}:510257897386:layer:aws-sdk-v3:1"
+              - !Sub "arn:aws:lambda:${AWS::Region}:510257897386:layer:axiosLayer:3"
+
+    LambdaFunction2:
+        Type: "AWS::Lambda::Function"
+        Properties:
+            Description: ""
+            FunctionName: "cors"
+            Handler: "index.handler"
+            Architectures: 
+              - "x86_64"
+            Code: 
+                S3Bucket: "prod-04-2014-tasks"
+                S3Key: "/snapshots/510257897386/cors-905a3111-c11a-4421-81d8-3778dfc3dfbb"
+                S3ObjectVersion: "IhMJDl5uabXT_AZOltQNtaxhpbUhbVtj"
+            MemorySize: 128
+            Role: "arn:aws:iam::510257897386:role/service-role/cors-role-clnczi1d"
+            Runtime: "nodejs14.x"
+            Timeout: 3
+            TracingConfig: 
+                Mode: "PassThrough"
+
+    LambdaFunction3:
+        Type: "AWS::Lambda::Function"
+        Properties:
+            Description: ""
+            Environment: 
+                Variables: 
+                    ELASTIC_SEARCH_URL: !Sub "https://search-${OpenSearchServiceDomain}-psl4sfbipecxwww5x35w7id6he.${AWS::Region}.es.amazonaws.com"
+                    ELASTIC_SEARCH_USERNAME: "pv2109"
+                    ELASTIC_SEARCH_PASSWORD: "9005@FHP#1brooklyn"
+            FunctionName: !Sub "search-${OpenSearchServiceDomain}"
+            Handler: "index.handler"
+            Architectures: 
+              - "x86_64"
+            Code: 
+                S3Bucket: "prod-04-2014-tasks"
+                S3Key: !Sub "/snapshots/510257897386/search-${OpenSearchServiceDomain}-86b6bccd-4ae6-4014-8030-aaae1d379467"
+                S3ObjectVersion: "AKZa7AsCVrlRv9JlXBriuNv0.Nrw_eQi"
+            MemorySize: 128
+            Role: !Sub "arn:aws:iam::510257897386:role/service-role/search-${OpenSearchServiceDomain}-role-ni79yk7m"
+            Runtime: "nodejs14.x"
+            Timeout: 63
+            TracingConfig: 
+                Mode: "PassThrough"
+            Layers: 
+              - !Sub "arn:aws:lambda:${AWS::Region}:510257897386:layer:aws-sdk-v3:1"
+              - !Sub "arn:aws:lambda:${AWS::Region}:510257897386:layer:axiosLayer:3"
+
+    LambdaPermission:
+        Type: "AWS::Lambda::Permission"
+        Properties:
+            Action: "lambda:InvokeFunction"
+            FunctionName: !GetAtt LambdaFunction3.Arn
+            Principal: "apigateway.amazonaws.com"
+            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:510257897386:${ApiGatewayRestApi}/*/GET/search"
+
+    LambdaPermission2:
+        Type: "AWS::Lambda::Permission"
+        Properties:
+            Action: "lambda:InvokeFunction"
+            FunctionName: !GetAtt LambdaFunction3.Arn
+            Principal: "apigateway.amazonaws.com"
+            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:510257897386:${ApiGatewayRestApi}/*/GET/search"
+
+    LambdaPermission3:
+        Type: "AWS::Lambda::Permission"
+        Properties:
+            Action: "lambda:InvokeFunction"
+            FunctionName: !GetAtt LambdaFunction.Arn
+            Principal: "s3.amazonaws.com"
+            SourceArn: "arn:aws:s3:::b2-hw2"
+
+    LambdaPermission4:
+        Type: "AWS::Lambda::Permission"
+        Properties:
+            Action: "lambda:InvokeFunction"
+            FunctionName: !GetAtt LambdaFunction2.Arn
+            Principal: "apigateway.amazonaws.com"
+            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:510257897386:${ApiGatewayRestApi}/*/OPTIONS/upload/*/*"
+
+    LambdaPermission5:
+        Type: "AWS::Lambda::Permission"
+        Properties:
+            Action: "lambda:InvokeFunction"
+            FunctionName: !GetAtt LambdaFunction2.Arn
+            Principal: "apigateway.amazonaws.com"
+            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:510257897386:${ApiGatewayRestApi}/*/OPTIONS/search"
+
+    LambdaPermission6:
+        Type: "AWS::Lambda::Permission"
+        Properties:
+            Action: "lambda:InvokeFunction"
+            FunctionName: !GetAtt LambdaFunction2.Arn
+            Principal: "apigateway.amazonaws.com"
+            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:510257897386:${ApiGatewayRestApi}/*/OPTIONS/search"
+
+    LambdaLayerVersion:
+        Type: "AWS::Lambda::LayerVersion"
+        Properties:
+            Description: ""
+            CompatibleRuntimes: 
+              - "nodejs14.x"
+            LayerName: "aws-sdk-v3"
+            Content: 
+                S3Bucket: "prod-04-2014-layers"
+                S3Key: "/snapshots/510257897386/aws-sdk-v3-c991c556-ea91-4751-9ee8-56e6c127800c"
+
+    LambdaLayerVersion2:
+        Type: "AWS::Lambda::LayerVersion"
+        Properties:
+            Description: ""
+            CompatibleRuntimes: 
+              - "nodejs14.x"
+              - "nodejs12.x"
+            LayerName: "axiosLayer"
+            Content: 
+                S3Bucket: "prod-04-2014-layers"
+                S3Key: "/snapshots/510257897386/axiosLayer-892ca2fc-4320-4389-919c-9e1e3a1eb84a"
+
+    LambdaLayerVersion3:
+        Type: "AWS::Lambda::LayerVersion"
+        Properties:
+            Description: ""
+            LayerName: "axiosLayer"
+            Content: 
+                S3Bucket: "prod-04-2014-layers"
+                S3Key: "/snapshots/510257897386/axiosLayer-47fe7e54-8cc0-4966-83ce-79fbf6f55fed"
+
+    ElastiCacheUser:
+        Type: "AWS::ElastiCache::User"
+        Properties:
+            UserId: "default"
+            UserName: "default"
+            Engine: "redis"
+            AccessString: "on ~* +@all"
+            NoPasswordRequired: true
+
+    SNSTopic:
+        Type: "AWS::SNS::Topic"
+        Properties:
+            DisplayName: ""
+            TopicName: "Default_CloudWatch_Alarms_Topic"
+
+    SNSTopicPolicy:
+        Type: "AWS::SNS::TopicPolicy"
+        Properties:
+            PolicyDocument: !Sub "{\"Version\":\"2008-10-17\",\"Id\":\"__default_policy_ID\",\"Statement\":[{\"Sid\":\"__default_statement_ID\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":[\"SNS:GetTopicAttributes\",\"SNS:SetTopicAttributes\",\"SNS:AddPermission\",\"SNS:RemovePermission\",\"SNS:DeleteTopic\",\"SNS:Subscribe\",\"SNS:ListSubscriptionsByTopic\",\"SNS:Publish\"],\"Resource\":\"${SNSTopic}\",\"Condition\":{\"StringEquals\":{\"AWS:SourceOwner\":\"510257897386\"}}}]}"
+            Topics: 
+              - !Ref SNSTopic
+
+    SNSSubscription:
+        Type: "AWS::SNS::Subscription"
+        Properties:
+            TopicArn: !Ref SNSTopic
+            Endpoint: "priyadarshan@nyu.edu"
+            Protocol: "email"
+            Region: !Ref AWS::Region
+
+    SNSSubscription2:
+        Type: "AWS::SNS::Subscription"
+        Properties:
+            TopicArn: !Ref SNSTopic
+            Endpoint: "priyadarshan@nyu.edu"
+            Protocol: "email"
+            Region: !Ref AWS::Region
+
+    CloudWatchAlarm:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            AlarmName: "Billing Exceeded 3$"
+            ActionsEnabled: true
+            AlarmActions: 
+              - !Ref SNSTopic
+            MetricName: "EstimatedCharges"
+            Namespace: "AWS/Billing"
+            Statistic: "Maximum"
+            Dimensions: 
+              - 
+                Name: "Currency"
+                Value: "USD"
+            Period: 21600
+            EvaluationPeriods: 1
+            DatapointsToAlarm: 1
+            Threshold: 3
+            ComparisonOperator: "GreaterThanOrEqualToThreshold"
+            TreatMissingData: "missing"
+
+    LogsLogGroup:
+        Type: "AWS::Logs::LogGroup"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+
+    LogsLogGroup2:
+        Type: "AWS::Logs::LogGroup"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+
+    LogsLogGroup3:
+        Type: "AWS::Logs::LogGroup"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+
+    LogsLogStream:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]14e42f31786b45bd8734713ed704798f"
+
+    LogsLogStream2:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]35a38fb552504147b8c04aec916179da"
+
+    LogsLogStream3:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]3fa7944b6b90434795807ac1046f58ab"
+
+    LogsLogStream4:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]62d5d5327e924205a320c34c18c626bc"
+
+    LogsLogStream5:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]673aedae1a584faa9777dc6915ce2309"
+
+    LogsLogStream6:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]a1486803e6d742a0b6a46848446a03a7"
+
+    LogsLogStream7:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]aa0dcdf8e8b14f78bc597b192a4318cd"
+
+    LogsLogStream8:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]ad8879930916408caa2982de9774e25b"
+
+    LogsLogStream9:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]c6ace2a86ad34b419e9978f7407e12c3"
+
+    LogsLogStream10:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]c958a4d952e54fddaab6f944a61ce48c"
+
+    LogsLogStream11:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]cd970d3010b544f4b2b52ae95cc8a789"
+
+    LogsLogStream12:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]ce4ad7cb1f9f4d309cd110df60e9a838"
+
+    LogsLogStream13:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]e434dc15be0c4669a1bb534534944f4c"
+
+    LogsLogStream14:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]e784464d80554ce085ca23ee78b336ea"
+
+    LogsLogStream15:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]eac27a8a5f114b58b73682b8d8ccbf92"
+
+    LogsLogStream16:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/09/[$LATEST]ee9b541e25ed4c4ba3c1036495ef73b7"
+
+    LogsLogStream17:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]1b65cb4413434a58b600eb9c181f4966"
+
+    LogsLogStream18:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]34627ae08ecd4eacbabb9c6fb5abb3e5"
+
+    LogsLogStream19:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]43b51d24f8864ccb8e6d11c54220cb9b"
+
+    LogsLogStream20:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]4759f474478d4723b9ab520d638dfc96"
+
+    LogsLogStream21:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]4fa21797108440088fa7ef01f44d13ec"
+
+    LogsLogStream22:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]562b0d7a50d045948cdcf13b53c1d316"
+
+    LogsLogStream23:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]5fdfdfa8bc9544e6bb8732990af04cb9"
+
+    LogsLogStream24:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]63d988c148074996b5bbfe097c7acff8"
+
+    LogsLogStream25:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]64168e4b6f18447a91b0fbaa65a78c39"
+
+    LogsLogStream26:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]851d26f3f6ed4d99a994a1b68a2a139a"
+
+    LogsLogStream27:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]86322228107f4bcf8f10eca4f356c77b"
+
+    LogsLogStream28:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]a7717fae9a4447bcaa9e18c9c44ae21c"
+
+    LogsLogStream29:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]ab5d1032817b42fcb5a7acc0530be1cc"
+
+    LogsLogStream30:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]b648447013344894ab88bdf7c15e3fe2"
+
+    LogsLogStream31:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]13f7a40f544f42a0bf593aa3395196a9"
+
+    LogsLogStream32:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]44559827141a449689c406cdca11339b"
+
+    LogsLogStream33:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]45d27c8e9a1a4bfe94e5f2129c7008c7"
+
+    LogsLogStream34:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]4ce84bac0e9142209af1922f778514b5"
+
+    LogsLogStream35:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]63d9aa1c03264d8bb2a6fd044cb463a6"
+
+    LogsLogStream36:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]7da40ec576a24f759946a58dd900e04d"
+
+    LogsLogStream37:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]8da94f01dd794fd788ead32a40e9f0d9"
+
+    LogsLogStream38:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]92712df5dbbb4a3e83fcfe89053125bf"
+
+    LogsLogStream39:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]ad80a93fb19f4800b88a432b0bce2a99"
+
+    LogsLogStream40:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]b2d3f0905e5e4db69eff2fafd3be2987"
+
+    LogsLogStream41:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]f0e35c9cd65c4b37ba6b9c204bf2ff09"
+
+    LogsLogStream42:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/09/[$LATEST]fb61db28e3914202a0a1890693122896"
+
+    ApiGatewayRestApi:
+        Type: "AWS::ApiGateway::RestApi"
+        Properties:
+            Name: !Sub "AI ${ApiGatewayModel4} Search"
+            Description: !Sub "AI ${ApiGatewayModel4} Search application, built during the Cloud and Big Data course at Columbia University."
+            ApiKeySourceType: "HEADER"
+            BinaryMediaTypes: 
+              - "*/*"
+              - "image/*"
+            EndpointConfiguration: 
+                Types: 
+                  - "REGIONAL"
+
+    ApiGatewayStage:
+        Type: "AWS::ApiGateway::Stage"
+        Properties:
+            StageName: "Production"
+            DeploymentId: !Ref ApiGatewayDeployment13
+            RestApiId: !Ref ApiGatewayRestApi
+            CacheClusterEnabled: false
+            TracingEnabled: false
+
+    ApiGatewayDeployment:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment2:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment3:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment4:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment5:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment6:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment7:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment8:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment9:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment10:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment11:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment12:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment13:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment14:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment15:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment16:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment17:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment18:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment19:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment20:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment21:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment22:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment23:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayResource:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: "{folder}"
+            ParentId: !Ref ApiGatewayResource2
+
+    ApiGatewayResource2:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: "upload"
+            ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+
+    ApiGatewayResource3:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: "search"
+            ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+
+    ApiGatewayResource4:
+        Type: "AWS::ApiGateway::Resource"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            PathPart: "{object}"
+            ParentId: !Ref ApiGatewayResource
+
+    ApiGatewayMethod:
+        Type: "AWS::ApiGateway::Method"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            ResourceId: !Ref ApiGatewayResource3
+            HttpMethod: "GET"
+            AuthorizationType: "NONE"
+            ApiKeyRequired: false
+            OperationName: !Sub "search${ApiGatewayModel4}s"
+            RequestParameters: 
+                "method.request.querystring.q": false
+            MethodResponses: 
+              - 
+                ResponseModels: 
+                    "application/json": !Ref ApiGatewayModel3
+                ResponseParameters: 
+                    "method.response.header.Access-Control-Allow-Origin": false
+                StatusCode: "200"
+              - 
+                ResponseModels: 
+                    "application/json": !Ref ApiGatewayModel
+                StatusCode: "403"
+              - 
+                ResponseModels: 
+                    "application/json": !Ref ApiGatewayModel
+                StatusCode: "500"
+            Integration: 
+                CacheNamespace: !Ref ApiGatewayResource3
+                ContentHandling: "CONVERT_TO_TEXT"
+                IntegrationHttpMethod: "POST"
+                IntegrationResponses: 
+                  - 
+                    ResponseParameters: 
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                    ResponseTemplates: {}
+                    StatusCode: "200"
+                PassthroughBehavior: "WHEN_NO_MATCH"
+                TimeoutInMillis: 29000
+                Type: "AWS_PROXY"
+                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:510257897386:function:${LambdaFunction3}/invocations"
+
+    ApiGatewayMethod2:
+        Type: "AWS::ApiGateway::Method"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            ResourceId: !Ref ApiGatewayResource4
+            HttpMethod: "PUT"
+            AuthorizationType: "NONE"
+            ApiKeyRequired: false
+            RequestParameters: 
+                "method.request.header.x-amz-meta-customLabels": false
+                "method.request.path.folder": true
+                "method.request.path.object": true
+            MethodResponses: 
+              - 
+                ResponseParameters: 
+                    "method.response.header.Access-Control-Allow-Origin": false
+                StatusCode: "200"
+            Integration: 
+                CacheNamespace: !Ref ApiGatewayResource4
+                Credentials: !GetAtt IAMRole.Arn
+                IntegrationHttpMethod: "PUT"
+                IntegrationResponses: 
+                  - 
+                    ResponseParameters: 
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                    ResponseTemplates: {}
+                    SelectionPattern: ""
+                    StatusCode: "200"
+                PassthroughBehavior: "WHEN_NO_MATCH"
+                RequestParameters: 
+                    "integration.request.header.x-amz-meta-customLabels": "method.request.header.x-amz-meta-customLabels"
+                    "integration.request.path.bucket": "method.request.path.folder"
+                    "integration.request.path.key": "method.request.path.object"
+                TimeoutInMillis: 29000
+                Type: "AWS"
+                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:s3:path/{bucket}/{key}"
+
+    ApiGatewayMethod3:
+        Type: "AWS::ApiGateway::Method"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            ResourceId: !Ref ApiGatewayResource3
+            HttpMethod: "OPTIONS"
+            AuthorizationType: "NONE"
+            ApiKeyRequired: false
+            RequestParameters: {}
+            MethodResponses: 
+              - 
+                ResponseParameters: 
+                    "method.response.header.Access-Control-Allow-Headers": false
+                    "method.response.header.Access-Control-Allow-Methods": false
+                    "method.response.header.Access-Control-Allow-Origin": false
+                StatusCode: "200"
+            Integration: 
+                CacheNamespace: !Ref ApiGatewayResource3
+                ContentHandling: "CONVERT_TO_TEXT"
+                IntegrationHttpMethod: "POST"
+                IntegrationResponses: 
+                  - 
+                    ResponseTemplates: {}
+                    StatusCode: "200"
+                PassthroughBehavior: "WHEN_NO_MATCH"
+                TimeoutInMillis: 29000
+                Type: "AWS_PROXY"
+                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:510257897386:function:${LambdaFunction2}/invocations"
+
+    ApiGatewayMethod4:
+        Type: "AWS::ApiGateway::Method"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            ResourceId: !Ref ApiGatewayResource4
+            HttpMethod: "OPTIONS"
+            AuthorizationType: "NONE"
+            ApiKeyRequired: false
+            RequestParameters: 
+                "method.request.path.folder": true
+                "method.request.path.object": true
+            Integration: 
+                CacheNamespace: !Ref ApiGatewayResource4
+                ContentHandling: "CONVERT_TO_TEXT"
+                IntegrationHttpMethod: "POST"
+                IntegrationResponses: 
+                  - 
+                    ResponseTemplates: {}
+                    StatusCode: "200"
+                PassthroughBehavior: "WHEN_NO_MATCH"
+                TimeoutInMillis: 29000
+                Type: "AWS_PROXY"
+                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:510257897386:function:${LambdaFunction2}/invocations"
+
+    ApiGatewayModel:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            Name: "Error"
+            Schema: |
+                {
+                  "type" : "object",
+                  "properties" : {
+                    "code" : {
+                      "type" : "integer",
+                      "format" : "int32"
+                    },
+                    "message" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel2:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            Name: "MODEL2acbd1"
+            Schema: |
+                {
+                  "type" : "object",
+                  "properties" : { }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel3:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            Name: "SearchResponse"
+            Schema: !Sub |
+                {
+                  "type" : "object",
+                  "properties" : {
+                    "results" : {
+                      "type" : "array",
+                      "items" : {
+                        "$ref":"https://apigateway.amazonaws.com/restapis/${ApiGatewayRestApi}/models/${ApiGatewayModel4}"
+                      }
+                    }
+                  }
+                }
+            ContentType: "application/json"
+
+    ApiGatewayModel4:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: "1gp8m5d9ba"
+            Name: "Photo"
+            Schema: |
+                {
+                  "type" : "object",
+                  "properties" : {
+                    "url" : {
+                      "type" : "string"
+                    },
+                    "labels" : {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
+                }
+            ContentType: "application/json"
+
+    OpenSearchServiceDomain:
+        Type: "AWS::OpenSearchService::Domain"
+        Properties:
+            DomainName: "photos"
+            EngineVersion: "OpenSearch_1.2"
+            ClusterConfig: 
+                ColdStorageOptions: 
+                    Enabled: false
+                DedicatedMasterEnabled: false
+                InstanceCount: 1
+                InstanceType: "t3.small.elasticsearch"
+                ZoneAwarenessEnabled: false
+                WarmEnabled: false
+            AccessPolicies: !Sub "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":\"es:*\",\"Resource\":\"arn:aws:es:${AWS::Region}:510257897386:domain/photos/*\"}]}"
+            SnapshotOptions: {}
+            snapshot_options: {}
+            EncryptionAtRestOptions: 
+                Enabled: true
+                KmsKeyId: !Sub "arn:aws:kms:${AWS::Region}:510257897386:key/c4f7c319-166a-4393-99d7-e63bb19ee0a4"
+            NodeToNodeEncryptionOptions: 
+                Enabled: true
+            AdvancedOptions: 
+                "indices.fielddata.cache.size": "20"
+                "indices.query.bool.max_clause_count": "1024"
+                override_main_response_version: "false"
+                "rest.action.multi.allow_explicit_index": "true"
+            EBSOptions: 
+                EBSEnabled: true
+                VolumeType: "gp2"
+                VolumeSize: 10
+            CognitoOptions: 
+                Enabled: false
+            DomainEndpointOptions: 
+                EnforceHTTPS: true
+                TLSSecurityPolicy: "Policy-Min-TLS-1-0-2019-07"
+                CustomEndpointEnabled: false
+            AdvancedSecurityOptions: 
+                Enabled: true
+                InternalUserDatabaseEnabled: true
+                AnonymousAuthEnabled: false
+
+    PinpointEmailIdentity:
+        Type: "AWS::PinpointEmail::Identity"
+        Properties:
+            Name: "priyadarshan@nyu.edu"
+            DkimSigningEnabled: false
+            FeedbackForwardingEnabled: true
+            MailFromAttributes: 
+                BehaviorOnMxFailure: "USE_DEFAULT_VALUE"
+
+    XRayGroup:
+        Type: "AWS::XRay::Group"
+        Properties:
+            GroupName: "Default"
+            InsightsConfiguration: 
+                InsightsEnabled: false
+                NotificationsEnabled: false
+
+    LexBot:
+        Type: "AWS::Lex::Bot"
+        Properties:
+            Name: !Sub "${ApiGatewayModel4}Search"
+            RoleArn: "arn:aws:iam::510257897386:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_CQFISCDKQDM"
+            DataPrivacy: 
+                childDirected: false
+            IdleSessionTTLInSeconds: 300
+
+    MemoryDBUser:
+        Type: "AWS::MemoryDB::User"
+        Properties:
+            UserName: "default"
+            AccessString: "on ~* &* +@all"
+            AuthenticationMode: "no-password"
+
+    MemoryDBACL:
+        Type: "AWS::MemoryDB::ACL"
+        Properties:
+            ACLName: "open-access"
+            UserNames: 
+              - "default"
+
+    MemoryDBParameterGroup:
+        Type: "AWS::MemoryDB::ParameterGroup"
+        Properties:
+            Description: "Default parameter group for memorydb_redis6"
+            Family: "memorydb_redis6"
+            Parameters: 
+              - 
+                Name: "acllog-max-len"
+                Value: "128"
+                Description: "The maximum length of the ACL Log"
+                DataType: "integer"
+                AllowedValues: "1-10000"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "activedefrag"
+                Value: "no"
+                Description: "Enabled active memory defragmentation"
+                DataType: "string"
+                AllowedValues: "yes,no"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "active-defrag-cycle-max"
+                Value: "75"
+                Description: "Maximal effort for defrag in CPU percentage"
+                DataType: "integer"
+                AllowedValues: "1-75"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "active-defrag-cycle-min"
+                Value: "5"
+                Description: "Minimal effort for defrag in CPU percentage"
+                DataType: "integer"
+                AllowedValues: "1-75"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "active-defrag-ignore-bytes"
+                Value: "104857600"
+                Description: "Minimum amount of fragmentation waste to start active defrag"
+                DataType: "integer"
+                AllowedValues: "1048576-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "active-defrag-max-scan-fields"
+                Value: "1000"
+                Description: "Maximum number of set/hash/zset/list fields that will be processed from the main dictionary scan"
+                DataType: "integer"
+                AllowedValues: "1-1000000"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "active-defrag-threshold-lower"
+                Value: "10"
+                Description: "Minimum percentage of fragmentation to start active defrag"
+                DataType: "integer"
+                AllowedValues: "1-100"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "active-defrag-threshold-upper"
+                Value: "100"
+                Description: "Maximum percentage of fragmentation at which we use maximum effort"
+                DataType: "integer"
+                AllowedValues: "1-100"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "active-expire-effort"
+                Value: "1"
+                Description: "The amount of effort that redis uses to expire items in the active expiration job"
+                DataType: "integer"
+                AllowedValues: "1-10"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "activerehashing"
+                Value: "yes"
+                Description: "Apply rehashing or not"
+                DataType: "string"
+                AllowedValues: "yes,no"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "client-output-buffer-limit-normal-hard-limit"
+                Value: "0"
+                Description: "Normal client output buffer hard limit in bytes"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "client-output-buffer-limit-normal-soft-limit"
+                Value: "0"
+                Description: "Normal client output buffer soft limit in bytes"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "client-output-buffer-limit-normal-soft-seconds"
+                Value: "0"
+                Description: "Normal client output buffer soft limit in seconds"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "client-output-buffer-limit-pubsub-hard-limit"
+                Value: "33554432"
+                Description: "Pubsub client output buffer hard limit in bytes"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "client-output-buffer-limit-pubsub-soft-limit"
+                Value: "8388608"
+                Description: "Pubsub client output buffer soft limit in bytes"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "client-output-buffer-limit-pubsub-soft-seconds"
+                Value: "60"
+                Description: "Pubsub client output buffer soft limit in seconds"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "hash-max-ziplist-entries"
+                Value: "512"
+                Description: "The maximum number of hash entries in order for the dataset to be compressed"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "hash-max-ziplist-value"
+                Value: "64"
+                Description: "The threshold of biggest hash entries in order for the dataset to be compressed"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "hll-sparse-max-bytes"
+                Value: "3000"
+                Description: "HyperLogLog sparse representation bytes limit"
+                DataType: "integer"
+                AllowedValues: "1-16000"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "lazyfree-lazy-eviction"
+                Value: "no"
+                Description: "Perform an asynchronous delete on evictions"
+                DataType: "string"
+                AllowedValues: "yes,no"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "lazyfree-lazy-expire"
+                Value: "no"
+                Description: "Perform an asynchronous delete on expired keys"
+                DataType: "string"
+                AllowedValues: "yes,no"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "lazyfree-lazy-server-del"
+                Value: "no"
+                Description: "Perform an asynchronous delete on key updates"
+                DataType: "string"
+                AllowedValues: "yes,no"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "lazyfree-lazy-user-del"
+                Value: "no"
+                Description: "Specifies whether the default behavior of DEL command acts the same as UNLINK"
+                DataType: "string"
+                AllowedValues: "yes,no"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "lfu-decay-time"
+                Value: "1"
+                Description: "The amount of time in minutes to decrement the key counter for LFU eviction policyd"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "lfu-log-factor"
+                Value: "10"
+                Description: "The log factor for incrementing key counter for LFU eviction policy"
+                DataType: "integer"
+                AllowedValues: "1-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "list-compress-depth"
+                Value: "0"
+                Description: "Number of quicklist ziplist nodes from each side of the list to exclude from compression. The head and tail of the list are always uncompressed for fast push/pop operations"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "maxmemory-policy"
+                Value: "noeviction"
+                Description: "Max memory policy"
+                DataType: "string"
+                AllowedValues: "volatile-lru,allkeys-lru,volatile-lfu,allkeys-lfu,volatile-random,allkeys-random,volatile-ttl,noeviction"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "maxmemory-samples"
+                Value: "3"
+                Description: "Max memory samples"
+                DataType: "integer"
+                AllowedValues: "1-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "notify-keyspace-events"
+                Description: "The keyspace events for Redis to notify Pub/Sub clients about. By default all notifications are disabled"
+                DataType: "string"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "set-max-intset-entries"
+                Value: "512"
+                Description: "The limit in the size of the set in order for the dataset to be compressed"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "slowlog-log-slower-than"
+                Value: "10000"
+                Description: "The execution time, in microseconds, to exceed in order for the command to get logged. Note that a negative number disables the slow log, while a value of zero forces the logging of every command"
+                DataType: "integer"
+                AllowedValues: "-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "slowlog-max-len"
+                Value: "128"
+                Description: "The length of the slow log. There is no limit to this length. Just be aware that it will consume memory. You can reclaim memory used by the slow log with SLOWLOG RESET."
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "stream-node-max-bytes"
+                Value: "4096"
+                Description: "The maximum size of a single node in a stream in bytes"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "stream-node-max-entries"
+                Value: "100"
+                Description: "The maximum number of items a single node in a stream can contain"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "tcp-keepalive"
+                Value: "300"
+                Description: "If non-zero, send ACKs every given number of seconds"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "timeout"
+                Value: "0"
+                Description: "Close connection if client is idle for a given number of seconds, or never if 0"
+                DataType: "integer"
+                AllowedValues: "0,20-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "tracking-table-max-keys"
+                Value: "1000000"
+                Description: "The maximum number of keys allowed for the tracking table for client side caching"
+                DataType: "integer"
+                AllowedValues: "1-100000000"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "zset-max-ziplist-entries"
+                Value: "128"
+                Description: "The maximum number of sorted set entries in order for the dataset to be compressed"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+              - 
+                Name: "zset-max-ziplist-value"
+                Value: "64"
+                Description: "The threshold of biggest sorted set entries in order for the dataset to be compressed"
+                DataType: "integer"
+                AllowedValues: "0-"
+                MinimumEngineVersion: "6.2.4"
+
