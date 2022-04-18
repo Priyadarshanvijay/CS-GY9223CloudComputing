@@ -1,0 +1,30 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+    commands:
+      - cd Assignment2
+      - echo "Installing dependencies..."
+      - npm install
+  build:
+    commands:
+      - echo "Zipping deployment package..."
+      - cd Assignment2/node_modules
+      - zip -r9 ../deployment_package_1.zip .
+      - zip -r9 ../deployment_package_2.zip .
+      - cd ..
+      - cd lambdas
+      - mv lf1.js handler.js
+      - zip -g deployment_package_1.zip handler.js
+      - mv handler.js lf1.js
+      - mv lf2.js handler.js
+      - zip -g deployment_package_2.zip handler.js
+      - mv handler.js lf2.js
+
+  post_build:
+    commands:
+      - echo "Updating lambda Functions..."
+      - aws lambda update-function-code --function-name search-photos --zip-file fileb://deployment_package_1.zip
+      - aws lambda update-function-code --function-name index-photos --zip-file fileb://deployment_package_2.zip
+      - echo "DONE!!"
