@@ -62,6 +62,7 @@ function searchFromVoice() {
   recognition.onresult = (event) => {
     const speechToText = event.results[0][0].transcript;
     console.log(speechToText)
+    recognition.stop();
 
     var apigClient = apigClientFactory.newClient({ apiKey: "apikey" });
     var params = {
