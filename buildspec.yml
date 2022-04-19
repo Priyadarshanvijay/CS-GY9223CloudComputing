@@ -10,15 +10,13 @@ phases:
   build:
     commands:
       - echo "Zipping deployment package..."
-      - zip -r9 ../deployment_package_1.zip ./node_modules
-      - zip -r9 ../deployment_package_2.zip ./node_modules
       - cd lambdas
-      - mv lf1.js handler.js
-      - zip -g ../../deployment_package_1.zip handler.js
-      - mv handler.js lf1.js
-      - mv lf2.js handler.js
-      - zip -g ../../deployment_package_2.zip handler.js
-      - mv handler.js lf2.js
+      - mv lf1.js index.js
+      - zip -g ../../deployment_package_1.zip index.js
+      - mv index.js lf1.js
+      - mv lf2.js index.js
+      - zip -g ../../deployment_package_2.zip index.js
+      - mv index.js lf2.js
 
   post_build:
     commands:
