@@ -59,6 +59,12 @@ exports.handler = async (event) => {
   console.log(interpretedValue)
   const osResult = await openSearch(interpretedValue);
   const response = {
+      headers: {
+              'Access-Control-Allow-Origin' : '*',
+              'Access-Control-Allow-Methods': '*',
+              'Access-Control-Allow-Headers': '*',
+              'Content-Type': 'application/json'
+          },
       statusCode: 200,
       body: JSON.stringify({
         keys: osResult
