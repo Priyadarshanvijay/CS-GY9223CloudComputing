@@ -43,7 +43,7 @@ exports.handler =  async function(event, context) {
   const labels = await rekognition.detectLabels(rParams).promise();
   const autoLabel  = await s3.headObject(sParams).promise()
   const rLabels = labels.Labels.map(({ Name }) => Name) || [];
-  const sLabels = (autoLabel.Metadata['x-amz-meta-customLabels'] || '').split(',');
+  const sLabels = (autoLabel.Metadata['customlabels'] || '').split(',');
   const tLabels = [...rLabels, ...sLabels];
   console.log(tLabels)
   const osObject = {
