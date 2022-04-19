@@ -6,6 +6,36 @@ Resources:
     IAMRole:
         Type: "AWS::IAM::Role"
         Properties:
+            Path: "/service-role/"
+            RoleName: !Sub "AWSCodePipelineServiceRole-${AWS::Region}-LambdasPipeline"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"codepipeline.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - !Ref IAMManagedPolicy15
+
+    IAMRole2:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/service-role/"
+            RoleName: !Sub "AWSCodePipelineServiceRole-${AWS::Region}-FrontEndPipeline"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"codepipeline.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - !Ref IAMManagedPolicy7
+
+    IAMRole3:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/service-role/"
+            RoleName: !Sub "codebuild-${CodeBuildProject}-service-role"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"codebuild.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - !Ref IAMManagedPolicy4
+
+    IAMRole4:
+        Type: "AWS::IAM::Role"
+        Properties:
             Path: "/"
             RoleName: "api-gateway-to-s3"
             AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
@@ -15,17 +45,53 @@ Resources:
               - !Ref IAMManagedPolicy2
             Description: "Allows API Gateway to s3 upload"
 
-    IAMRole2:
+    IAMRole5:
         Type: "AWS::IAM::Role"
         Properties:
             Path: "/service-role/"
-            RoleName: !Sub "${LambdaFunction2}-role-clnczi1d"
+            RoleName: !Sub "${LambdaFunction}-role-clnczi1d"
             AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
             MaxSessionDuration: 3600
             ManagedPolicyArns: 
-              - !Ref IAMManagedPolicy4
+              - !Ref IAMManagedPolicy16
 
-    IAMRole3:
+    IAMRole6:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/service-role/"
+            RoleName: !Sub "${LambdaFunction2}-role-xkxwnf8y"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+              - "arn:aws:iam::aws:policy/AmazonRekognitionFullAccess"
+              - !Ref IAMManagedPolicy5
+              - !Ref IAMManagedPolicy10
+
+    IAMRole7:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/service-role/"
+            RoleName: "lambda_deploy_codepipeline"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"codebuild.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+              - !Ref IAMManagedPolicy8
+              - "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
+
+    IAMRole8:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/service-role/"
+            RoleName: !Sub "${LambdaFunction3}-role-ni79yk7m"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - "arn:aws:iam::aws:policy/AmazonLexFullAccess"
+              - !Ref IAMManagedPolicy13
+
+    IAMRole9:
         Type: "AWS::IAM::Role"
         Properties:
             Path: "/"
@@ -39,57 +105,33 @@ Resources:
               - "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
             Description: "Allows API Gateway to push logs to CloudWatch Logs."
 
-    IAMRole4:
-        Type: "AWS::IAM::Role"
-        Properties:
-            Path: "/service-role/"
-            RoleName: !Sub "${LambdaFunction3}-role-ni79yk7m"
-            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
-            MaxSessionDuration: 3600
-            ManagedPolicyArns: 
-              - "arn:aws:iam::aws:policy/AmazonLexFullAccess"
-              - !Ref IAMManagedPolicy11
-
-    IAMRole5:
-        Type: "AWS::IAM::Role"
-        Properties:
-            Path: "/service-role/"
-            RoleName: !Sub "${LambdaFunction}-role-xkxwnf8y"
-            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
-            MaxSessionDuration: 3600
-            ManagedPolicyArns: 
-              - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-              - "arn:aws:iam::aws:policy/AmazonRekognitionFullAccess"
-              - !Ref IAMManagedPolicy6
-              - !Ref IAMManagedPolicy12
-
     IAMServiceLinkedRole:
-        Type: "AWS::IAM::ServiceLinkedRole"
-        Properties:
-            AWSServiceName: "globalaccelerator.amazonaws.com"
-            Description: "Allows Global Accelerator to call AWS services on customer's behalf"
-
-    IAMServiceLinkedRole2:
-        Type: "AWS::IAM::ServiceLinkedRole"
-        Properties:
-            AWSServiceName: "lexv2.amazonaws.com"
-            CustomSuffix: "CQFISCDKQDM"
-
-    IAMServiceLinkedRole3:
-        Type: "AWS::IAM::ServiceLinkedRole"
-        Properties:
-            AWSServiceName: "opensearchservice.amazonaws.com"
-
-    IAMServiceLinkedRole4:
         Type: "AWS::IAM::ServiceLinkedRole"
         Properties:
             AWSServiceName: "ops.apigateway.amazonaws.com"
             Description: "The Service Linked Role is used by Amazon API Gateway."
 
+    IAMServiceLinkedRole2:
+        Type: "AWS::IAM::ServiceLinkedRole"
+        Properties:
+            AWSServiceName: "opensearchservice.amazonaws.com"
+
+    IAMServiceLinkedRole3:
+        Type: "AWS::IAM::ServiceLinkedRole"
+        Properties:
+            AWSServiceName: "lexv2.amazonaws.com"
+            CustomSuffix: "CQFISCDKQDM"
+
+    IAMServiceLinkedRole4:
+        Type: "AWS::IAM::ServiceLinkedRole"
+        Properties:
+            AWSServiceName: "globalaccelerator.amazonaws.com"
+            Description: "Allows Global Accelerator to call AWS services on customer's behalf"
+
     IAMManagedPolicy:
         Type: "AWS::IAM::ManagedPolicy"
         Properties:
-            ManagedPolicyName: "AWSLambdaBasicExecutionRole-5813a71d-abf3-4742-b92c-0318c0bcc045"
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-1c840caa-78e5-42c1-8afb-edc51b028e84"
             Path: "/service-role/"
             PolicyDocument: !Sub |
                 {
@@ -98,7 +140,7 @@ Resources:
                         {
                             "Effect": "Allow",
                             "Action": "logs:CreateLogGroup",
-                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
                         },
                         {
                             "Effect": "Allow",
@@ -107,7 +149,7 @@ Resources:
                                 "logs:PutLogEvents"
                             ],
                             "Resource": [
-                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf0:*"
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/lf1:*"
                             ]
                         }
                     ]
@@ -134,60 +176,6 @@ Resources:
     IAMManagedPolicy3:
         Type: "AWS::IAM::ManagedPolicy"
         Properties:
-            ManagedPolicyName: "AWSLambdaBasicExecutionRole-1c840caa-78e5-42c1-8afb-edc51b028e84"
-            Path: "/service-role/"
-            PolicyDocument: !Sub |
-                {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Action": "logs:CreateLogGroup",
-                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
-                        },
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "logs:CreateLogStream",
-                                "logs:PutLogEvents"
-                            ],
-                            "Resource": [
-                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf1:*"
-                            ]
-                        }
-                    ]
-                }
-
-    IAMManagedPolicy4:
-        Type: "AWS::IAM::ManagedPolicy"
-        Properties:
-            ManagedPolicyName: "AWSLambdaBasicExecutionRole-a802a653-2288-4ef8-8051-f83b0cab193f"
-            Path: "/service-role/"
-            PolicyDocument: !Sub |
-                {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Action": "logs:CreateLogGroup",
-                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
-                        },
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "logs:CreateLogStream",
-                                "logs:PutLogEvents"
-                            ],
-                            "Resource": [
-                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/${LambdaFunction2}:*"
-                            ]
-                        }
-                    ]
-                }
-
-    IAMManagedPolicy5:
-        Type: "AWS::IAM::ManagedPolicy"
-        Properties:
             ManagedPolicyName: "AWSLambdaBasicExecutionRole-94a17980-336f-411d-a12c-db37f875a356"
             Path: "/service-role/"
             PolicyDocument: !Sub |
@@ -197,7 +185,7 @@ Resources:
                         {
                             "Effect": "Allow",
                             "Action": "logs:CreateLogGroup",
-                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
                         },
                         {
                             "Effect": "Allow",
@@ -206,13 +194,63 @@ Resources:
                                 "logs:PutLogEvents"
                             ],
                             "Resource": [
-                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf2:*"
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/lf2:*"
                             ]
                         }
                     ]
                 }
 
-    IAMManagedPolicy6:
+    IAMManagedPolicy4:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: !Sub "CodeBuildBasePolicy-${CodeBuildProject}-${AWS::Region}"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProject}",
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProject}:*"
+                            ],
+                            "Action": [
+                                "logs:CreateLogGroup",
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::codepipeline-${AWS::Region}-*"
+                            ],
+                            "Action": [
+                                "s3:PutObject",
+                                "s3:GetObject",
+                                "s3:GetObjectVersion",
+                                "s3:GetBucketAcl",
+                                "s3:GetBucketLocation"
+                            ]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "codebuild:CreateReportGroup",
+                                "codebuild:CreateReport",
+                                "codebuild:UpdateReport",
+                                "codebuild:BatchPutTestCases",
+                                "codebuild:BatchPutCodeCoverages"
+                            ],
+                            "Resource": [
+                                "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${CodeBuildProject}-*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy5:
         Type: "AWS::IAM::ManagedPolicy"
         Properties:
             ManagedPolicyName: "AWSLambdaBasicExecutionRole-e49aee31-0f90-4b39-8695-5326f792b982"
@@ -224,7 +262,7 @@ Resources:
                         {
                             "Effect": "Allow",
                             "Action": "logs:CreateLogGroup",
-                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
                         },
                         {
                             "Effect": "Allow",
@@ -233,16 +271,16 @@ Resources:
                                 "logs:PutLogEvents"
                             ],
                             "Resource": [
-                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/${LambdaFunction}:*"
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${LambdaFunction2}:*"
                             ]
                         }
                     ]
                 }
 
-    IAMManagedPolicy7:
+    IAMManagedPolicy6:
         Type: "AWS::IAM::ManagedPolicy"
         Properties:
-            ManagedPolicyName: "AWSLambdaBasicExecutionRole-18e8a2b7-984f-4c13-a540-b73942565fac"
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-5813a71d-abf3-4742-b92c-0318c0bcc045"
             Path: "/service-role/"
             PolicyDocument: !Sub |
                 {
@@ -251,7 +289,7 @@ Resources:
                         {
                             "Effect": "Allow",
                             "Action": "logs:CreateLogGroup",
-                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
                         },
                         {
                             "Effect": "Allow",
@@ -260,13 +298,243 @@ Resources:
                                 "logs:PutLogEvents"
                             ],
                             "Resource": [
-                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf1-2:*"
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/lf0:*"
                             ]
                         }
                     ]
                 }
 
+    IAMManagedPolicy7:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: !Sub "AWSCodePipelineServiceRole-${AWS::Region}-FrontEndPipeline"
+            Path: "/service-role/"
+            PolicyDocument: |
+                {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "iam:PassRole"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow",
+                            "Condition": {
+                                "StringEqualsIfExists": {
+                                    "iam:PassedToService": [
+                                        "cloudformation.amazonaws.com",
+                                        "elasticbeanstalk.amazonaws.com",
+                                        "ec2.amazonaws.com",
+                                        "ecs-tasks.amazonaws.com"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Action": [
+                                "codecommit:CancelUploadArchive",
+                                "codecommit:GetBranch",
+                                "codecommit:GetCommit",
+                                "codecommit:GetRepository",
+                                "codecommit:GetUploadArchiveStatus",
+                                "codecommit:UploadArchive"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "codedeploy:CreateDeployment",
+                                "codedeploy:GetApplication",
+                                "codedeploy:GetApplicationRevision",
+                                "codedeploy:GetDeployment",
+                                "codedeploy:GetDeploymentConfig",
+                                "codedeploy:RegisterApplicationRevision"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "codestar-connections:UseConnection"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "elasticbeanstalk:*",
+                                "ec2:*",
+                                "elasticloadbalancing:*",
+                                "autoscaling:*",
+                                "cloudwatch:*",
+                                "s3:*",
+                                "sns:*",
+                                "cloudformation:*",
+                                "rds:*",
+                                "sqs:*",
+                                "ecs:*"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "lambda:InvokeFunction",
+                                "lambda:ListFunctions"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "opsworks:CreateDeployment",
+                                "opsworks:DescribeApps",
+                                "opsworks:DescribeCommands",
+                                "opsworks:DescribeDeployments",
+                                "opsworks:DescribeInstances",
+                                "opsworks:DescribeStacks",
+                                "opsworks:UpdateApp",
+                                "opsworks:UpdateStack"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "cloudformation:CreateStack",
+                                "cloudformation:DeleteStack",
+                                "cloudformation:DescribeStacks",
+                                "cloudformation:UpdateStack",
+                                "cloudformation:CreateChangeSet",
+                                "cloudformation:DeleteChangeSet",
+                                "cloudformation:DescribeChangeSet",
+                                "cloudformation:ExecuteChangeSet",
+                                "cloudformation:SetStackPolicy",
+                                "cloudformation:ValidateTemplate"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "codebuild:BatchGetBuilds",
+                                "codebuild:StartBuild",
+                                "codebuild:BatchGetBuildBatches",
+                                "codebuild:StartBuildBatch"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "devicefarm:ListProjects",
+                                "devicefarm:ListDevicePools",
+                                "devicefarm:GetRun",
+                                "devicefarm:GetUpload",
+                                "devicefarm:CreateUpload",
+                                "devicefarm:ScheduleRun"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "servicecatalog:ListProvisioningArtifacts",
+                                "servicecatalog:CreateProvisioningArtifact",
+                                "servicecatalog:DescribeProvisioningArtifact",
+                                "servicecatalog:DeleteProvisioningArtifact",
+                                "servicecatalog:UpdateProduct"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "cloudformation:ValidateTemplate"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "ecr:DescribeImages"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "states:DescribeExecution",
+                                "states:DescribeStateMachine",
+                                "states:StartExecution"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "appconfig:StartDeployment",
+                                "appconfig:StopDeployment",
+                                "appconfig:GetDeployment"
+                            ],
+                            "Resource": "*"
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                }
+
     IAMManagedPolicy8:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: !Sub "CodeBuildBasePolicy-${CodeBuildProject2}-${AWS::Region}"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProject2}",
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProject2}:*"
+                            ],
+                            "Action": [
+                                "logs:CreateLogGroup",
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::codepipeline-${AWS::Region}-*"
+                            ],
+                            "Action": [
+                                "s3:PutObject",
+                                "s3:GetObject",
+                                "s3:GetObjectVersion",
+                                "s3:GetBucketAcl",
+                                "s3:GetBucketLocation"
+                            ]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "codebuild:CreateReportGroup",
+                                "codebuild:CreateReport",
+                                "codebuild:UpdateReport",
+                                "codebuild:BatchPutTestCases",
+                                "codebuild:BatchPutCodeCoverages"
+                            ],
+                            "Resource": [
+                                "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${CodeBuildProject2}-*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy9:
         Type: "AWS::IAM::ManagedPolicy"
         Properties:
             ManagedPolicyName: "AWSLambdaBasicExecutionRole-c4140727-1c4f-4795-a15d-2b335cb4523d"
@@ -278,7 +546,7 @@ Resources:
                         {
                             "Effect": "Allow",
                             "Action": "logs:CreateLogGroup",
-                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
                         },
                         {
                             "Effect": "Allow",
@@ -287,94 +555,13 @@ Resources:
                                 "logs:PutLogEvents"
                             ],
                             "Resource": [
-                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf0-1:*"
-                            ]
-                        }
-                    ]
-                }
-
-    IAMManagedPolicy9:
-        Type: "AWS::IAM::ManagedPolicy"
-        Properties:
-            ManagedPolicyName: "AWSLambdaBasicExecutionRole-f4b93421-ffb3-4323-b09d-b5b04ceb5bec"
-            Path: "/service-role/"
-            PolicyDocument: !Sub |
-                {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Action": "logs:CreateLogGroup",
-                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
-                        },
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "logs:CreateLogStream",
-                                "logs:PutLogEvents"
-                            ],
-                            "Resource": [
-                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf1:*"
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/lf0-1:*"
                             ]
                         }
                     ]
                 }
 
     IAMManagedPolicy10:
-        Type: "AWS::IAM::ManagedPolicy"
-        Properties:
-            ManagedPolicyName: "AWSLambdaBasicExecutionRole-a287963b-be6d-4df9-9fbf-d43e78ea9513"
-            Path: "/service-role/"
-            PolicyDocument: !Sub |
-                {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Action": "logs:CreateLogGroup",
-                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
-                        },
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "logs:CreateLogStream",
-                                "logs:PutLogEvents"
-                            ],
-                            "Resource": [
-                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/lf1:*"
-                            ]
-                        }
-                    ]
-                }
-
-    IAMManagedPolicy11:
-        Type: "AWS::IAM::ManagedPolicy"
-        Properties:
-            ManagedPolicyName: "AWSLambdaBasicExecutionRole-e0f85849-16c8-4d0c-b2bd-017462d3c654"
-            Path: "/service-role/"
-            PolicyDocument: !Sub |
-                {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Action": "logs:CreateLogGroup",
-                            "Resource": "arn:aws:logs:${AWS::Region}:510257897386:*"
-                        },
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "logs:CreateLogStream",
-                                "logs:PutLogEvents"
-                            ],
-                            "Resource": [
-                                "arn:aws:logs:${AWS::Region}:510257897386:log-group:/aws/lambda/${LambdaFunction3}:*"
-                            ]
-                        }
-                    ]
-                }
-
-    IAMManagedPolicy12:
         Type: "AWS::IAM::ManagedPolicy"
         Properties:
             ManagedPolicyName: "AWSLambdaVPCAccessExecutionRole-8601fe37-fcb0-4634-9e84-2ef684218cab"
@@ -395,29 +582,322 @@ Resources:
                     ]
                 }
 
-    LambdaFunction:
-        Type: "AWS::Lambda::Function"
+    IAMManagedPolicy11:
+        Type: "AWS::IAM::ManagedPolicy"
         Properties:
-            Description: ""
-            FunctionName: !Sub "index-${OpenSearchServiceDomain}"
-            Handler: "index.handler"
-            Architectures: 
-              - "x86_64"
-            Code: 
-                S3Bucket: "prod-04-2014-tasks"
-                S3Key: !Sub "/snapshots/510257897386/index-${OpenSearchServiceDomain}-98506870-5ebb-4ac5-9df0-1e7a7c141c9f"
-                S3ObjectVersion: "bBCxsI5.Q6mI6bXVonMIGomjSwU8RV_P"
-            MemorySize: 512
-            Role: !Sub "arn:aws:iam::510257897386:role/service-role/index-${OpenSearchServiceDomain}-role-xkxwnf8y"
-            Runtime: "nodejs14.x"
-            Timeout: 195
-            TracingConfig: 
-                Mode: "PassThrough"
-            Layers: 
-              - !Sub "arn:aws:lambda:${AWS::Region}:510257897386:layer:aws-sdk-v3:1"
-              - !Sub "arn:aws:lambda:${AWS::Region}:510257897386:layer:axiosLayer:3"
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-18e8a2b7-984f-4c13-a540-b73942565fac"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/lf1-2:*"
+                            ]
+                        }
+                    ]
+                }
 
-    LambdaFunction2:
+    IAMManagedPolicy12:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-f4b93421-ffb3-4323-b09d-b5b04ceb5bec"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/lf1:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy13:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-e0f85849-16c8-4d0c-b2bd-017462d3c654"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${LambdaFunction3}:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy14:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-a287963b-be6d-4df9-9fbf-d43e78ea9513"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/lf1:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy15:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: !Sub "AWSCodePipelineServiceRole-${AWS::Region}-LambdasPipeline"
+            Path: "/service-role/"
+            PolicyDocument: |
+                {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "iam:PassRole"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow",
+                            "Condition": {
+                                "StringEqualsIfExists": {
+                                    "iam:PassedToService": [
+                                        "cloudformation.amazonaws.com",
+                                        "elasticbeanstalk.amazonaws.com",
+                                        "ec2.amazonaws.com",
+                                        "ecs-tasks.amazonaws.com"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Action": [
+                                "codecommit:CancelUploadArchive",
+                                "codecommit:GetBranch",
+                                "codecommit:GetCommit",
+                                "codecommit:GetRepository",
+                                "codecommit:GetUploadArchiveStatus",
+                                "codecommit:UploadArchive"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "codedeploy:CreateDeployment",
+                                "codedeploy:GetApplication",
+                                "codedeploy:GetApplicationRevision",
+                                "codedeploy:GetDeployment",
+                                "codedeploy:GetDeploymentConfig",
+                                "codedeploy:RegisterApplicationRevision"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "codestar-connections:UseConnection"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "elasticbeanstalk:*",
+                                "ec2:*",
+                                "elasticloadbalancing:*",
+                                "autoscaling:*",
+                                "cloudwatch:*",
+                                "s3:*",
+                                "sns:*",
+                                "cloudformation:*",
+                                "rds:*",
+                                "sqs:*",
+                                "ecs:*"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "lambda:InvokeFunction",
+                                "lambda:ListFunctions"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "opsworks:CreateDeployment",
+                                "opsworks:DescribeApps",
+                                "opsworks:DescribeCommands",
+                                "opsworks:DescribeDeployments",
+                                "opsworks:DescribeInstances",
+                                "opsworks:DescribeStacks",
+                                "opsworks:UpdateApp",
+                                "opsworks:UpdateStack"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "cloudformation:CreateStack",
+                                "cloudformation:DeleteStack",
+                                "cloudformation:DescribeStacks",
+                                "cloudformation:UpdateStack",
+                                "cloudformation:CreateChangeSet",
+                                "cloudformation:DeleteChangeSet",
+                                "cloudformation:DescribeChangeSet",
+                                "cloudformation:ExecuteChangeSet",
+                                "cloudformation:SetStackPolicy",
+                                "cloudformation:ValidateTemplate"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Action": [
+                                "codebuild:BatchGetBuilds",
+                                "codebuild:StartBuild",
+                                "codebuild:BatchGetBuildBatches",
+                                "codebuild:StartBuildBatch"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "devicefarm:ListProjects",
+                                "devicefarm:ListDevicePools",
+                                "devicefarm:GetRun",
+                                "devicefarm:GetUpload",
+                                "devicefarm:CreateUpload",
+                                "devicefarm:ScheduleRun"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "servicecatalog:ListProvisioningArtifacts",
+                                "servicecatalog:CreateProvisioningArtifact",
+                                "servicecatalog:DescribeProvisioningArtifact",
+                                "servicecatalog:DeleteProvisioningArtifact",
+                                "servicecatalog:UpdateProduct"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "cloudformation:ValidateTemplate"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "ecr:DescribeImages"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "states:DescribeExecution",
+                                "states:DescribeStateMachine",
+                                "states:StartExecution"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "appconfig:StartDeployment",
+                                "appconfig:StopDeployment",
+                                "appconfig:GetDeployment"
+                            ],
+                            "Resource": "*"
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                }
+
+    IAMManagedPolicy16:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-a802a653-2288-4ef8-8051-f83b0cab193f"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${LambdaFunction}:*"
+                            ]
+                        }
+                    ]
+                }
+
+    LambdaFunction:
         Type: "AWS::Lambda::Function"
         Properties:
             Description: ""
@@ -427,14 +907,40 @@ Resources:
               - "x86_64"
             Code: 
                 S3Bucket: "prod-04-2014-tasks"
-                S3Key: "/snapshots/510257897386/cors-905a3111-c11a-4421-81d8-3778dfc3dfbb"
+                S3Key: !Sub "/snapshots/${AWS::AccountId}/cors-905a3111-c11a-4421-81d8-3778dfc3dfbb"
                 S3ObjectVersion: "IhMJDl5uabXT_AZOltQNtaxhpbUhbVtj"
             MemorySize: 128
-            Role: "arn:aws:iam::510257897386:role/service-role/cors-role-clnczi1d"
+            Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/service-role/cors-role-clnczi1d"
             Runtime: "nodejs14.x"
             Timeout: 3
             TracingConfig: 
                 Mode: "PassThrough"
+            EphemeralStorage: 
+                Size: 512
+
+    LambdaFunction2:
+        Type: "AWS::Lambda::Function"
+        Properties:
+            Description: ""
+            FunctionName: !Sub "index-${OpenSearchServiceDomain}"
+            Handler: "index.handler"
+            Architectures: 
+              - "x86_64"
+            Code: 
+                S3Bucket: "prod-04-2014-tasks"
+                S3Key: !Sub "/snapshots/${AWS::AccountId}/index-${OpenSearchServiceDomain}-e63d35fd-ad32-417b-8d11-2c248f096575"
+                S3ObjectVersion: "9Vyf3Guqd80z6uyGo5i9tv1KCyxasU34"
+            MemorySize: 512
+            Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/service-role/index-${OpenSearchServiceDomain}-role-xkxwnf8y"
+            Runtime: "nodejs14.x"
+            Timeout: 195
+            TracingConfig: 
+                Mode: "PassThrough"
+            Layers: 
+              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:aws-sdk-v3:1"
+              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:axiosLayer:3"
+            EphemeralStorage: 
+                Size: 512
 
     LambdaFunction3:
         Type: "AWS::Lambda::Function"
@@ -451,17 +957,19 @@ Resources:
               - "x86_64"
             Code: 
                 S3Bucket: "prod-04-2014-tasks"
-                S3Key: !Sub "/snapshots/510257897386/search-${OpenSearchServiceDomain}-86b6bccd-4ae6-4014-8030-aaae1d379467"
-                S3ObjectVersion: "AKZa7AsCVrlRv9JlXBriuNv0.Nrw_eQi"
+                S3Key: !Sub "/snapshots/${AWS::AccountId}/search-${OpenSearchServiceDomain}-f37dc888-6d35-46ab-bcaa-abf014e7e799"
+                S3ObjectVersion: "FIaE0qRJnUFXEIP4Agrt5_NyHt3dQ_WS"
             MemorySize: 128
-            Role: !Sub "arn:aws:iam::510257897386:role/service-role/search-${OpenSearchServiceDomain}-role-ni79yk7m"
+            Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/service-role/search-${OpenSearchServiceDomain}-role-ni79yk7m"
             Runtime: "nodejs14.x"
             Timeout: 63
             TracingConfig: 
                 Mode: "PassThrough"
             Layers: 
-              - !Sub "arn:aws:lambda:${AWS::Region}:510257897386:layer:aws-sdk-v3:1"
-              - !Sub "arn:aws:lambda:${AWS::Region}:510257897386:layer:axiosLayer:3"
+              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:aws-sdk-v3:1"
+              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:axiosLayer:3"
+            EphemeralStorage: 
+                Size: 512
 
     LambdaPermission:
         Type: "AWS::Lambda::Permission"
@@ -469,7 +977,7 @@ Resources:
             Action: "lambda:InvokeFunction"
             FunctionName: !GetAtt LambdaFunction3.Arn
             Principal: "apigateway.amazonaws.com"
-            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:510257897386:${ApiGatewayRestApi}/*/GET/search"
+            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*/GET/search"
 
     LambdaPermission2:
         Type: "AWS::Lambda::Permission"
@@ -477,52 +985,41 @@ Resources:
             Action: "lambda:InvokeFunction"
             FunctionName: !GetAtt LambdaFunction3.Arn
             Principal: "apigateway.amazonaws.com"
-            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:510257897386:${ApiGatewayRestApi}/*/GET/search"
+            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*/GET/search"
 
     LambdaPermission3:
         Type: "AWS::Lambda::Permission"
         Properties:
             Action: "lambda:InvokeFunction"
             FunctionName: !GetAtt LambdaFunction.Arn
-            Principal: "s3.amazonaws.com"
-            SourceArn: "arn:aws:s3:::b2-hw2"
+            Principal: "apigateway.amazonaws.com"
+            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*/OPTIONS/upload/*/*"
 
     LambdaPermission4:
         Type: "AWS::Lambda::Permission"
         Properties:
             Action: "lambda:InvokeFunction"
-            FunctionName: !GetAtt LambdaFunction2.Arn
+            FunctionName: !GetAtt LambdaFunction.Arn
             Principal: "apigateway.amazonaws.com"
-            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:510257897386:${ApiGatewayRestApi}/*/OPTIONS/upload/*/*"
+            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*/OPTIONS/search"
 
     LambdaPermission5:
         Type: "AWS::Lambda::Permission"
         Properties:
             Action: "lambda:InvokeFunction"
-            FunctionName: !GetAtt LambdaFunction2.Arn
+            FunctionName: !GetAtt LambdaFunction.Arn
             Principal: "apigateway.amazonaws.com"
-            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:510257897386:${ApiGatewayRestApi}/*/OPTIONS/search"
+            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*/OPTIONS/search"
 
     LambdaPermission6:
         Type: "AWS::Lambda::Permission"
         Properties:
             Action: "lambda:InvokeFunction"
             FunctionName: !GetAtt LambdaFunction2.Arn
-            Principal: "apigateway.amazonaws.com"
-            SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:510257897386:${ApiGatewayRestApi}/*/OPTIONS/search"
+            Principal: "s3.amazonaws.com"
+            SourceArn: "arn:aws:s3:::b2-hw2"
 
     LambdaLayerVersion:
-        Type: "AWS::Lambda::LayerVersion"
-        Properties:
-            Description: ""
-            CompatibleRuntimes: 
-              - "nodejs14.x"
-            LayerName: "aws-sdk-v3"
-            Content: 
-                S3Bucket: "prod-04-2014-layers"
-                S3Key: "/snapshots/510257897386/aws-sdk-v3-c991c556-ea91-4751-9ee8-56e6c127800c"
-
-    LambdaLayerVersion2:
         Type: "AWS::Lambda::LayerVersion"
         Properties:
             Description: ""
@@ -532,16 +1029,27 @@ Resources:
             LayerName: "axiosLayer"
             Content: 
                 S3Bucket: "prod-04-2014-layers"
-                S3Key: "/snapshots/510257897386/axiosLayer-892ca2fc-4320-4389-919c-9e1e3a1eb84a"
+                S3Key: !Sub "/snapshots/${AWS::AccountId}/axiosLayer-892ca2fc-4320-4389-919c-9e1e3a1eb84a"
 
-    LambdaLayerVersion3:
+    LambdaLayerVersion2:
         Type: "AWS::Lambda::LayerVersion"
         Properties:
             Description: ""
             LayerName: "axiosLayer"
             Content: 
                 S3Bucket: "prod-04-2014-layers"
-                S3Key: "/snapshots/510257897386/axiosLayer-47fe7e54-8cc0-4966-83ce-79fbf6f55fed"
+                S3Key: !Sub "/snapshots/${AWS::AccountId}/axiosLayer-47fe7e54-8cc0-4966-83ce-79fbf6f55fed"
+
+    LambdaLayerVersion3:
+        Type: "AWS::Lambda::LayerVersion"
+        Properties:
+            Description: ""
+            CompatibleRuntimes: 
+              - "nodejs14.x"
+            LayerName: "aws-sdk-v3"
+            Content: 
+                S3Bucket: "prod-04-2014-layers"
+                S3Key: !Sub "/snapshots/${AWS::AccountId}/aws-sdk-v3-c991c556-ea91-4751-9ee8-56e6c127800c"
 
     ElastiCacheUser:
         Type: "AWS::ElastiCache::User"
@@ -561,7 +1069,7 @@ Resources:
     SNSTopicPolicy:
         Type: "AWS::SNS::TopicPolicy"
         Properties:
-            PolicyDocument: !Sub "{\"Version\":\"2008-10-17\",\"Id\":\"__default_policy_ID\",\"Statement\":[{\"Sid\":\"__default_statement_ID\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":[\"SNS:GetTopicAttributes\",\"SNS:SetTopicAttributes\",\"SNS:AddPermission\",\"SNS:RemovePermission\",\"SNS:DeleteTopic\",\"SNS:Subscribe\",\"SNS:ListSubscriptionsByTopic\",\"SNS:Publish\"],\"Resource\":\"${SNSTopic}\",\"Condition\":{\"StringEquals\":{\"AWS:SourceOwner\":\"510257897386\"}}}]}"
+            PolicyDocument: !Sub "{\"Version\":\"2008-10-17\",\"Id\":\"__default_policy_ID\",\"Statement\":[{\"Sid\":\"__default_statement_ID\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":[\"SNS:GetTopicAttributes\",\"SNS:SetTopicAttributes\",\"SNS:AddPermission\",\"SNS:RemovePermission\",\"SNS:DeleteTopic\",\"SNS:Subscribe\",\"SNS:ListSubscriptionsByTopic\",\"SNS:Publish\"],\"Resource\":\"${SNSTopic}\",\"Condition\":{\"StringEquals\":{\"AWS:SourceOwner\":\"${AWS::AccountId}\"}}}]}"
             Topics: 
               - !Ref SNSTopic
 
@@ -574,6 +1082,14 @@ Resources:
             Region: !Ref AWS::Region
 
     SNSSubscription2:
+        Type: "AWS::SNS::Subscription"
+        Properties:
+            TopicArn: !Ref SNSTopic
+            Endpoint: "priyadarshan@nyu.edu"
+            Protocol: "email"
+            Region: !Ref AWS::Region
+
+    SNSSubscription3:
         Type: "AWS::SNS::Subscription"
         Properties:
             TopicArn: !Ref SNSTopic
@@ -605,14 +1121,24 @@ Resources:
     LogsLogGroup:
         Type: "AWS::Logs::LogGroup"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
 
     LogsLogGroup2:
         Type: "AWS::Logs::LogGroup"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
 
     LogsLogGroup3:
+        Type: "AWS::Logs::LogGroup"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+
+    LogsLogGroup4:
+        Type: "AWS::Logs::LogGroup"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+
+    LogsLogGroup5:
         Type: "AWS::Logs::LogGroup"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
@@ -620,254 +1146,533 @@ Resources:
     LogsLogStream:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]14e42f31786b45bd8734713ed704798f"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "257b4ad6-d343-48d9-bd7f-a0d5a596aff8"
 
     LogsLogStream2:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]35a38fb552504147b8c04aec916179da"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "423d2cbb-6db7-4ff9-bf22-c92718efd5f2"
 
     LogsLogStream3:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]3fa7944b6b90434795807ac1046f58ab"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "433a74f1-6460-4d79-b284-c7cb6b816b5f"
 
     LogsLogStream4:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]62d5d5327e924205a320c34c18c626bc"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "4a442dff-2788-4168-9bee-1ebf931a0678"
 
     LogsLogStream5:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]673aedae1a584faa9777dc6915ce2309"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "52f5becf-d58b-4a4f-baff-1ba77e66c97b"
 
     LogsLogStream6:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]a1486803e6d742a0b6a46848446a03a7"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "7865a852-db26-42dc-b9fb-138323803962"
 
     LogsLogStream7:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]aa0dcdf8e8b14f78bc597b192a4318cd"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "8bb1044d-a5b3-4329-99c0-96cf006044f2"
 
     LogsLogStream8:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]ad8879930916408caa2982de9774e25b"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "9b4d3ef0-ae76-4726-a377-22527379b4b5"
 
     LogsLogStream9:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]c6ace2a86ad34b419e9978f7407e12c3"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "d05b00eb-616b-4090-8322-da49ae2c3084"
 
     LogsLogStream10:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]c958a4d952e54fddaab6f944a61ce48c"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "d63fa33d-a64a-40db-9b4c-cad1a7a419f6"
 
     LogsLogStream11:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]cd970d3010b544f4b2b52ae95cc8a789"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "dbd317d0-0d45-43d7-aa12-0375fb93ee14"
 
     LogsLogStream12:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]ce4ad7cb1f9f4d309cd110df60e9a838"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "de2a0afd-d002-4c64-80b7-7bcf37317d6c"
 
     LogsLogStream13:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]e434dc15be0c4669a1bb534534944f4c"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject}"
+            LogStreamName: "f78be370-55bf-4912-ae25-10c6f8807bd5"
 
     LogsLogStream14:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]e784464d80554ce085ca23ee78b336ea"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "009849e3-50fa-40a9-a6a6-0728b51485f9"
 
     LogsLogStream15:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]eac27a8a5f114b58b73682b8d8ccbf92"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "0c510c63-bdcc-4a36-9bfd-2d2e1fe4cc02"
 
     LogsLogStream16:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
-            LogStreamName: "2022/04/09/[$LATEST]ee9b541e25ed4c4ba3c1036495ef73b7"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "6155d121-f156-44de-95f8-0e9fb64975e1"
 
     LogsLogStream17:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]1b65cb4413434a58b600eb9c181f4966"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "98c86c10-4559-4e83-af1c-33baead39469"
 
     LogsLogStream18:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]34627ae08ecd4eacbabb9c6fb5abb3e5"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "b2d144b7-a9a8-47e4-a682-cdad8527ef4e"
 
     LogsLogStream19:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]43b51d24f8864ccb8e6d11c54220cb9b"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "b85d76e3-5387-4533-9f9c-b02aaec9dcf1"
 
     LogsLogStream20:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]4759f474478d4723b9ab520d638dfc96"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "b8828f7b-5269-43c2-a1fb-10701a0e7fad"
 
     LogsLogStream21:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]4fa21797108440088fa7ef01f44d13ec"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "bb8f44dd-517b-43d1-9a60-eeaae7512c25"
 
     LogsLogStream22:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]562b0d7a50d045948cdcf13b53c1d316"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "bc47160f-bb39-474d-aa1f-2cddaa56c68c"
 
     LogsLogStream23:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]5fdfdfa8bc9544e6bb8732990af04cb9"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "c671e9fb-6b94-4236-ac65-f9c2821ac3fb"
 
     LogsLogStream24:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]63d988c148074996b5bbfe097c7acff8"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "d7dfa82b-36a4-4182-a983-28ef81db2247"
 
     LogsLogStream25:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]64168e4b6f18447a91b0fbaa65a78c39"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "e81afc86-4429-412b-a74a-c6f13a2179f5"
 
     LogsLogStream26:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]851d26f3f6ed4d99a994a1b68a2a139a"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "eddd58aa-113d-47a5-be5f-259c8ed1d50d"
 
     LogsLogStream27:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]86322228107f4bcf8f10eca4f356c77b"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "f73c4c58-7e4b-4fd3-be54-8d869aff3583"
 
     LogsLogStream28:
         Type: "AWS::Logs::LogStream"
         Properties:
-            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]a7717fae9a4447bcaa9e18c9c44ae21c"
+            LogGroupName: !Sub "/aws/codebuild/${CodeBuildProject2}"
+            LogStreamName: "f9bc17b5-6caf-4e43-b099-9a63566ae3ef"
 
     LogsLogStream29:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]ab5d1032817b42fcb5a7acc0530be1cc"
+            LogStreamName: "2022/04/09/[$LATEST]14e42f31786b45bd8734713ed704798f"
 
     LogsLogStream30:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
-            LogStreamName: "2022/04/09/[$LATEST]b648447013344894ab88bdf7c15e3fe2"
+            LogStreamName: "2022/04/09/[$LATEST]35a38fb552504147b8c04aec916179da"
 
     LogsLogStream31:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]3fa7944b6b90434795807ac1046f58ab"
+
+    LogsLogStream32:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]62d5d5327e924205a320c34c18c626bc"
+
+    LogsLogStream33:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]673aedae1a584faa9777dc6915ce2309"
+
+    LogsLogStream34:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]a1486803e6d742a0b6a46848446a03a7"
+
+    LogsLogStream35:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]aa0dcdf8e8b14f78bc597b192a4318cd"
+
+    LogsLogStream36:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]ad8879930916408caa2982de9774e25b"
+
+    LogsLogStream37:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]c6ace2a86ad34b419e9978f7407e12c3"
+
+    LogsLogStream38:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]c958a4d952e54fddaab6f944a61ce48c"
+
+    LogsLogStream39:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]cd970d3010b544f4b2b52ae95cc8a789"
+
+    LogsLogStream40:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]ce4ad7cb1f9f4d309cd110df60e9a838"
+
+    LogsLogStream41:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]e434dc15be0c4669a1bb534534944f4c"
+
+    LogsLogStream42:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]e784464d80554ce085ca23ee78b336ea"
+
+    LogsLogStream43:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]eac27a8a5f114b58b73682b8d8ccbf92"
+
+    LogsLogStream44:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/09/[$LATEST]ee9b541e25ed4c4ba3c1036495ef73b7"
+
+    LogsLogStream45:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/19/[$LATEST]1d2986a8a71942c998f4192cf9aab333"
+
+    LogsLogStream46:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/19/[$LATEST]379fe7abdfac49eb87c274e775796b60"
+
+    LogsLogStream47:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/19/[$LATEST]67174941919e41ac8d6a7bfb218e5d81"
+
+    LogsLogStream48:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/19/[$LATEST]6e9a0114210e416c8b46e2cb04d26fe8"
+
+    LogsLogStream49:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/19/[$LATEST]ae20d6add7dc414fb85e0fe0a0331644"
+
+    LogsLogStream50:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/19/[$LATEST]b4c1c6b2307a4df0a7fca3794f894d68"
+
+    LogsLogStream51:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/19/[$LATEST]c95d33f13da545e189cb796599291ecc"
+
+    LogsLogStream52:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+            LogStreamName: "2022/04/19/[$LATEST]d35262a56c5e4c678762450f83f0ff0d"
+
+    LogsLogStream53:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/19/[$LATEST]3946f84e057e447980189981f98f60db"
+
+    LogsLogStream54:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/19/[$LATEST]46b8d21f72724ea8a9865e65c5bdbe3d"
+
+    LogsLogStream55:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction2}"
+            LogStreamName: "2022/04/19/[$LATEST]ef13dbf898d7462ca75f2e999855d021"
+
+    LogsLogStream56:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]13f7a40f544f42a0bf593aa3395196a9"
 
-    LogsLogStream32:
+    LogsLogStream57:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]44559827141a449689c406cdca11339b"
 
-    LogsLogStream33:
+    LogsLogStream58:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]45d27c8e9a1a4bfe94e5f2129c7008c7"
 
-    LogsLogStream34:
+    LogsLogStream59:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]4ce84bac0e9142209af1922f778514b5"
 
-    LogsLogStream35:
+    LogsLogStream60:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]63d9aa1c03264d8bb2a6fd044cb463a6"
 
-    LogsLogStream36:
+    LogsLogStream61:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]7da40ec576a24f759946a58dd900e04d"
 
-    LogsLogStream37:
+    LogsLogStream62:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]8da94f01dd794fd788ead32a40e9f0d9"
 
-    LogsLogStream38:
+    LogsLogStream63:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]92712df5dbbb4a3e83fcfe89053125bf"
 
-    LogsLogStream39:
+    LogsLogStream64:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]ad80a93fb19f4800b88a432b0bce2a99"
 
-    LogsLogStream40:
+    LogsLogStream65:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]b2d3f0905e5e4db69eff2fafd3be2987"
 
-    LogsLogStream41:
+    LogsLogStream66:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]f0e35c9cd65c4b37ba6b9c204bf2ff09"
 
-    LogsLogStream42:
+    LogsLogStream67:
         Type: "AWS::Logs::LogStream"
         Properties:
             LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
             LogStreamName: "2022/04/09/[$LATEST]fb61db28e3914202a0a1890693122896"
+
+    LogsLogStream68:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]08b2d9a3891d43b3b385ce133a638871"
+
+    LogsLogStream69:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]179cd6291ee9454c88c12a3f95133541"
+
+    LogsLogStream70:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]1eb797bd6da7493dbd4c2a51cd33dc04"
+
+    LogsLogStream71:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]21035cabc32a445eb5cd4218a9f1ed5d"
+
+    LogsLogStream72:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]50d1210fabd94558b5606a2db17b87ca"
+
+    LogsLogStream73:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]53f8fc8de3ea47c6983e81dca86cca0a"
+
+    LogsLogStream74:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]699bfd77ed62492ebe51ecc6654a524e"
+
+    LogsLogStream75:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]70bb3c0f265b42b68167e8422bb2c97a"
+
+    LogsLogStream76:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]7de6f38a4f46443784135f49f1a1df56"
+
+    LogsLogStream77:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]96a1d0d22bb645c9ae7b7916d2ae5deb"
+
+    LogsLogStream78:
+        Type: "AWS::Logs::LogStream"
+        Properties:
+            LogGroupName: !Sub "/aws/lambda/${LambdaFunction3}"
+            LogStreamName: "2022/04/19/[$LATEST]f390711f86434c48ab4ffc5fac8a815e"
+
+    CloudFrontDistribution:
+        Type: "AWS::CloudFront::Distribution"
+        Properties:
+            DistributionConfig: 
+                Origins: 
+                  - 
+                    ConnectionAttempts: 3
+                    ConnectionTimeout: 10
+                    CustomOriginConfig: 
+                        HTTPPort: 80
+                        HTTPSPort: 443
+                        OriginKeepaliveTimeout: 5
+                        OriginProtocolPolicy: "http-only"
+                        OriginReadTimeout: 30
+                        OriginSSLProtocols: 
+                          - "TLSv1"
+                          - "TLSv1.1"
+                          - "TLSv1.2"
+                    DomainName: !Sub "frontend-pipeline1.s3-website-${AWS::Region}.amazonaws.com"
+                    Id: !Sub "frontend-pipeline1.s3-website-${AWS::Region}.amazonaws.com"
+                    OriginPath: ""
+                  - 
+                    ConnectionAttempts: 3
+                    ConnectionTimeout: 10
+                    DomainName: !Sub "frontend-pipeline1.s3.${AWS::Region}.amazonaws.com"
+                    Id: !Sub "frontend-pipeline1.s3.${AWS::Region}.amazonaws.com"
+                    OriginPath: ""
+                    S3OriginConfig: 
+                        OriginAccessIdentity: ""
+                OriginGroups: 
+                    Quantity: 0
+                DefaultCacheBehavior: 
+                    AllowedMethods: 
+                      - "HEAD"
+                      - "GET"
+                    CachedMethods: 
+                      - "HEAD"
+                      - "GET"
+                    Compress: true
+                    CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+                    SmoothStreaming: false
+                    TargetOriginId: !Sub "frontend-pipeline1.s3.${AWS::Region}.amazonaws.com"
+                    ViewerProtocolPolicy: "allow-all"
+                Comment: ""
+                PriceClass: "PriceClass_100"
+                Enabled: true
+                ViewerCertificate: 
+                    CloudFrontDefaultCertificate: true
+                    MinimumProtocolVersion: "TLSv1"
+                    SslSupportMethod: "vip"
+                Restrictions: 
+                    GeoRestriction: 
+                        RestrictionType: "none"
+                HttpVersion: "http2"
+                DefaultRootObject: ""
+                IPV6Enabled: true
+
+    CloudFrontCloudFrontOriginAccessIdentity:
+        Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
+        Properties:
+            CloudFrontOriginAccessIdentityConfig: 
+                Comment: "s3-cf"
 
     ApiGatewayRestApi:
         Type: "AWS::ApiGateway::RestApi"
@@ -876,8 +1681,7 @@ Resources:
             Description: !Sub "AI ${ApiGatewayModel4} Search application, built during the Cloud and Big Data course at Columbia University."
             ApiKeySourceType: "HEADER"
             BinaryMediaTypes: 
-              - "*/*"
-              - "image/*"
+              - "mage/jpg;base64"
             EndpointConfiguration: 
                 Types: 
                   - "REGIONAL"
@@ -886,7 +1690,7 @@ Resources:
         Type: "AWS::ApiGateway::Stage"
         Properties:
             StageName: "Production"
-            DeploymentId: !Ref ApiGatewayDeployment13
+            DeploymentId: !Ref ApiGatewayDeployment19
             RestApiId: !Ref ApiGatewayRestApi
             CacheClusterEnabled: false
             TracingEnabled: false
@@ -1006,6 +1810,16 @@ Resources:
         Properties:
             RestApiId: !Ref ApiGatewayRestApi
 
+    ApiGatewayDeployment24:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayDeployment25:
+        Type: "AWS::ApiGateway::Deployment"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
     ApiGatewayResource:
         Type: "AWS::ApiGateway::Resource"
         Properties:
@@ -1035,6 +1849,28 @@ Resources:
             ParentId: !Ref ApiGatewayResource
 
     ApiGatewayMethod:
+        Type: "AWS::ApiGateway::Method"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            ResourceId: !Ref ApiGatewayResource3
+            HttpMethod: "OPTIONS"
+            AuthorizationType: "NONE"
+            ApiKeyRequired: false
+            RequestParameters: {}
+            Integration: 
+                CacheNamespace: !Ref ApiGatewayResource3
+                ContentHandling: "CONVERT_TO_TEXT"
+                IntegrationHttpMethod: "POST"
+                IntegrationResponses: 
+                  - 
+                    ResponseTemplates: {}
+                    StatusCode: "200"
+                PassthroughBehavior: "WHEN_NO_MATCH"
+                TimeoutInMillis: 29000
+                Type: "AWS_PROXY"
+                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}/invocations"
+
+    ApiGatewayMethod2:
         Type: "AWS::ApiGateway::Method"
         Properties:
             RestApiId: !Ref ApiGatewayRestApi
@@ -1073,9 +1909,33 @@ Resources:
                 PassthroughBehavior: "WHEN_NO_MATCH"
                 TimeoutInMillis: 29000
                 Type: "AWS_PROXY"
-                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:510257897386:function:${LambdaFunction3}/invocations"
+                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction3}/invocations"
 
-    ApiGatewayMethod2:
+    ApiGatewayMethod3:
+        Type: "AWS::ApiGateway::Method"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            ResourceId: !Ref ApiGatewayResource4
+            HttpMethod: "OPTIONS"
+            AuthorizationType: "NONE"
+            ApiKeyRequired: false
+            RequestParameters: 
+                "method.request.path.folder": true
+                "method.request.path.object": true
+            Integration: 
+                CacheNamespace: !Ref ApiGatewayResource4
+                ContentHandling: "CONVERT_TO_TEXT"
+                IntegrationHttpMethod: "POST"
+                IntegrationResponses: 
+                  - 
+                    ResponseTemplates: {}
+                    StatusCode: "200"
+                PassthroughBehavior: "WHEN_NO_MATCH"
+                TimeoutInMillis: 29000
+                Type: "AWS_PROXY"
+                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}/invocations"
+
+    ApiGatewayMethod4:
         Type: "AWS::ApiGateway::Method"
         Properties:
             RestApiId: !Ref ApiGatewayRestApi
@@ -1094,7 +1954,8 @@ Resources:
                 StatusCode: "200"
             Integration: 
                 CacheNamespace: !Ref ApiGatewayResource4
-                Credentials: !GetAtt IAMRole.Arn
+                ContentHandling: "CONVERT_TO_BINARY"
+                Credentials: !GetAtt IAMRole4.Arn
                 IntegrationHttpMethod: "PUT"
                 IntegrationResponses: 
                   - 
@@ -1111,59 +1972,6 @@ Resources:
                 TimeoutInMillis: 29000
                 Type: "AWS"
                 Uri: !Sub "arn:aws:apigateway:${AWS::Region}:s3:path/{bucket}/{key}"
-
-    ApiGatewayMethod3:
-        Type: "AWS::ApiGateway::Method"
-        Properties:
-            RestApiId: !Ref ApiGatewayRestApi
-            ResourceId: !Ref ApiGatewayResource3
-            HttpMethod: "OPTIONS"
-            AuthorizationType: "NONE"
-            ApiKeyRequired: false
-            RequestParameters: {}
-            MethodResponses: 
-              - 
-                ResponseParameters: 
-                    "method.response.header.Access-Control-Allow-Headers": false
-                    "method.response.header.Access-Control-Allow-Methods": false
-                    "method.response.header.Access-Control-Allow-Origin": false
-                StatusCode: "200"
-            Integration: 
-                CacheNamespace: !Ref ApiGatewayResource3
-                ContentHandling: "CONVERT_TO_TEXT"
-                IntegrationHttpMethod: "POST"
-                IntegrationResponses: 
-                  - 
-                    ResponseTemplates: {}
-                    StatusCode: "200"
-                PassthroughBehavior: "WHEN_NO_MATCH"
-                TimeoutInMillis: 29000
-                Type: "AWS_PROXY"
-                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:510257897386:function:${LambdaFunction2}/invocations"
-
-    ApiGatewayMethod4:
-        Type: "AWS::ApiGateway::Method"
-        Properties:
-            RestApiId: !Ref ApiGatewayRestApi
-            ResourceId: !Ref ApiGatewayResource4
-            HttpMethod: "OPTIONS"
-            AuthorizationType: "NONE"
-            ApiKeyRequired: false
-            RequestParameters: 
-                "method.request.path.folder": true
-                "method.request.path.object": true
-            Integration: 
-                CacheNamespace: !Ref ApiGatewayResource4
-                ContentHandling: "CONVERT_TO_TEXT"
-                IntegrationHttpMethod: "POST"
-                IntegrationResponses: 
-                  - 
-                    ResponseTemplates: {}
-                    StatusCode: "200"
-                PassthroughBehavior: "WHEN_NO_MATCH"
-                TimeoutInMillis: 29000
-                Type: "AWS_PROXY"
-                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:510257897386:function:${LambdaFunction2}/invocations"
 
     ApiGatewayModel:
         Type: "AWS::ApiGateway::Model"
@@ -1238,6 +2046,281 @@ Resources:
                 }
             ContentType: "application/json"
 
+    CodeBuildProject:
+        Type: "AWS::CodeBuild::Project"
+        Properties:
+            Name: "ClientBuildProject"
+            Source: 
+                BuildSpec: |
+                    version: 0.2
+                    
+                    #env:
+                      #variables:
+                         # key: "value"
+                         # key: "value"
+                      #parameter-store:
+                         # key: "value"
+                         # key: "value"
+                      #secrets-manager:
+                         # key: secret-id:json-key:version-stage:version-id
+                         # key: secret-id:json-key:version-stage:version-id
+                      #exported-variables:
+                         # - variable
+                         # - variable
+                      #git-credential-helper: yes
+                    #batch:
+                      #fast-fail: true
+                      #build-list:
+                      #build-matrix:
+                      #build-graph:
+                    phases:
+                      #install:
+                        #If you use the Ubuntu standard image 2.0 or later, you must specify runtime-versions.
+                        #If you specify runtime-versions and use an image other than Ubuntu standard image 2.0, the build fails.
+                        #runtime-versions:
+                          # name: version
+                          # name: version
+                        #commands:
+                          # - command
+                          # - command
+                      #pre_build:
+                        #commands:
+                          # - command
+                          # - command
+                      build:
+                        commands:
+                          # - command
+                          # - command
+                      #post_build:
+                        #commands:
+                          # - command
+                          # - command
+                    #reports:
+                      #report-name-or-arn:
+                        #files:
+                          # - location
+                          # - location
+                        #base-directory: location
+                        #discard-paths: yes
+                        #file-format: JunitXml | CucumberJson
+                    artifacts:
+                      files: 
+                          - "**/*"
+                        # - location
+                        # - location
+                      #name: $(date +%Y-%m-%d)
+                      discard-paths: no
+                      base-directory: Assignment2/frontend
+                    #cache:
+                      #paths:
+                        # - paths
+                InsecureSsl: false
+                Type: "CODEPIPELINE"
+            Artifacts: 
+                EncryptionDisabled: false
+                Name: "ClientBuildProject"
+                Packaging: "NONE"
+                Type: "CODEPIPELINE"
+            Cache: 
+                Type: "NO_CACHE"
+            Environment: 
+                ComputeType: "BUILD_GENERAL1_SMALL"
+                Image: "aws/codebuild/standard:5.0"
+                ImagePullCredentialsType: "CODEBUILD"
+                PrivilegedMode: false
+                Type: "LINUX_CONTAINER"
+            ServiceRole: !Sub "arn:aws:iam::${AWS::AccountId}:role/service-role/codebuild-ClientBuildProject-service-role"
+            TimeoutInMinutes: 60
+            QueuedTimeoutInMinutes: 480
+            EncryptionKey: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/s3"
+            BadgeEnabled: false
+            LogsConfig: 
+                CloudWatchLogs: 
+                    Status: "ENABLED"
+                S3Logs: 
+                    Status: "DISABLED"
+                    EncryptionDisabled: false
+            Visibility: "PRIVATE"
+
+    CodeBuildProject2:
+        Type: "AWS::CodeBuild::Project"
+        Properties:
+            Name: "LambdaDeploy"
+            Description: "This will deploy the lambda function stored in the repo for assignment 2. "
+            Source: 
+                InsecureSsl: false
+                Type: "CODEPIPELINE"
+            Artifacts: 
+                EncryptionDisabled: false
+                Name: "LambdaDeploy"
+                Packaging: "NONE"
+                Type: "CODEPIPELINE"
+            Cache: 
+                Type: "NO_CACHE"
+            Environment: 
+                ComputeType: "BUILD_GENERAL1_SMALL"
+                Image: "aws/codebuild/standard:5.0"
+                ImagePullCredentialsType: "CODEBUILD"
+                PrivilegedMode: false
+                Type: "LINUX_CONTAINER"
+            ServiceRole: !Sub "arn:aws:iam::${AWS::AccountId}:role/service-role/lambda_deploy_codepipeline"
+            TimeoutInMinutes: 60
+            QueuedTimeoutInMinutes: 480
+            EncryptionKey: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/s3"
+            BadgeEnabled: false
+            LogsConfig: 
+                CloudWatchLogs: 
+                    Status: "ENABLED"
+                S3Logs: 
+                    Status: "DISABLED"
+                    EncryptionDisabled: false
+            Visibility: "PRIVATE"
+
+    CodePipelinePipeline:
+        Type: "AWS::CodePipeline::Pipeline"
+        Properties:
+            Name: "FrontEndPipeline"
+            RoleArn: !GetAtt IAMRole2.Arn
+            ArtifactStore: 
+                Location: !Sub "codepipeline-${AWS::Region}-362604081258"
+                Type: "S3"
+            Stages: 
+              - 
+                Name: "Source"
+                Actions: 
+                  - 
+                    Name: "Source"
+                    ActionTypeId: 
+                        Category: "Source"
+                        Owner: "ThirdParty"
+                        Provider: "GitHub"
+                        Version: "1"
+                    Configuration: 
+                        Branch: "main"
+                        OAuthToken: "****"
+                        Owner: "Reucherian"
+                        PollForSourceChanges: "false"
+                        Repo: "cloud-computing"
+                    OutputArtifacts: 
+                      - 
+                        Name: "SourceArtifact"
+                    Region: !Ref AWS::Region
+                    Namespace: "SourceVariables"
+                    RunOrder: 1
+              - 
+                Name: "Build"
+                Actions: 
+                  - 
+                    Name: "Build"
+                    ActionTypeId: 
+                        Category: "Build"
+                        Owner: "AWS"
+                        Provider: "CodeBuild"
+                        Version: "1"
+                    Configuration: 
+                        ProjectName: !Ref CodeBuildProject
+                    InputArtifacts: 
+                      - 
+                        Name: "SourceArtifact"
+                    OutputArtifacts: 
+                      - 
+                        Name: "BuildArtifact"
+                    Region: !Ref AWS::Region
+                    Namespace: "BuildVariables"
+                    RunOrder: 1
+              - 
+                Name: "Deploy"
+                Actions: 
+                  - 
+                    Name: "Deploy"
+                    ActionTypeId: 
+                        Category: "Deploy"
+                        Owner: "AWS"
+                        Provider: "S3"
+                        Version: "1"
+                    Configuration: 
+                        BucketName: "frontend-pipeline1"
+                        Extract: "true"
+                    InputArtifacts: 
+                      - 
+                        Name: "BuildArtifact"
+                    Region: !Ref AWS::Region
+                    Namespace: "DeployVariables"
+                    RunOrder: 1
+
+    CodePipelinePipeline2:
+        Type: "AWS::CodePipeline::Pipeline"
+        Properties:
+            Name: "LambdasPipeline"
+            RoleArn: !GetAtt IAMRole.Arn
+            ArtifactStore: 
+                Location: !Sub "codepipeline-${AWS::Region}-362604081258"
+                Type: "S3"
+            Stages: 
+              - 
+                Name: "Source"
+                Actions: 
+                  - 
+                    Name: "Source"
+                    ActionTypeId: 
+                        Category: "Source"
+                        Owner: "ThirdParty"
+                        Provider: "GitHub"
+                        Version: "1"
+                    Configuration: 
+                        Branch: "main"
+                        OAuthToken: "****"
+                        Owner: "Reucherian"
+                        PollForSourceChanges: "false"
+                        Repo: "cloud-computing"
+                    OutputArtifacts: 
+                      - 
+                        Name: "SourceArtifact"
+                    Region: !Ref AWS::Region
+                    Namespace: "SourceVariables"
+                    RunOrder: 1
+              - 
+                Name: "Build"
+                Actions: 
+                  - 
+                    Name: "Build"
+                    ActionTypeId: 
+                        Category: "Build"
+                        Owner: "AWS"
+                        Provider: "CodeBuild"
+                        Version: "1"
+                    Configuration: 
+                        ProjectName: !Ref CodeBuildProject2
+                    InputArtifacts: 
+                      - 
+                        Name: "SourceArtifact"
+                    OutputArtifacts: 
+                      - 
+                        Name: "BuildArtifact"
+                    Region: !Ref AWS::Region
+                    Namespace: "BuildVariables"
+                    RunOrder: 1
+
+    CodePipelineWebhook:
+        Type: "AWS::CodePipeline::Webhook"
+        Properties:
+            Name: "FrontEndPipeline--Source--Reucheriancloudcomputing--195594078"
+            TargetPipeline: "FrontEndPipeline"
+            TargetAction: "Source"
+            Authentication: "GITHUB_HMAC"
+            AuthenticationConfiguration: 
+                SecretToken: "36642330335404747082817068179122186709299657126740908517551997557486147495082728110792723677512001"
+
+    CodePipelineWebhook2:
+        Type: "AWS::CodePipeline::Webhook"
+        Properties:
+            Name: "LambdasPipeline--Source--Reucheriancloudcomputing--92280648"
+            TargetPipeline: "LambdasPipeline"
+            TargetAction: "Source"
+            Authentication: "GITHUB_HMAC"
+            AuthenticationConfiguration: 
+                SecretToken: "312332380538741776028861423418575328374054614074116096245673389522299256292316795305661990094619"
+
     OpenSearchServiceDomain:
         Type: "AWS::OpenSearchService::Domain"
         Properties:
@@ -1251,12 +2334,12 @@ Resources:
                 InstanceType: "t3.small.elasticsearch"
                 ZoneAwarenessEnabled: false
                 WarmEnabled: false
-            AccessPolicies: !Sub "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":\"es:*\",\"Resource\":\"arn:aws:es:${AWS::Region}:510257897386:domain/photos/*\"}]}"
+            AccessPolicies: !Sub "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":\"es:*\",\"Resource\":\"arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/photos/*\"}]}"
             SnapshotOptions: {}
             snapshot_options: {}
             EncryptionAtRestOptions: 
                 Enabled: true
-                KmsKeyId: !Sub "arn:aws:kms:${AWS::Region}:510257897386:key/c4f7c319-166a-4393-99d7-e63bb19ee0a4"
+                KmsKeyId: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/c4f7c319-166a-4393-99d7-e63bb19ee0a4"
             NodeToNodeEncryptionOptions: 
                 Enabled: true
             AdvancedOptions: 
@@ -1288,6 +2371,53 @@ Resources:
             MailFromAttributes: 
                 BehaviorOnMxFailure: "USE_DEFAULT_VALUE"
 
+    AmplifyApp:
+        Type: "AWS::Amplify::App"
+        Properties:
+            Name: "CS-GY9223CloudComputing-Assignment2/frontend"
+            Repository: "https://github.com/Priyadarshanvijay/CS-GY9223CloudComputing"
+            EnvironmentVariables: 
+              - 
+                Name: "AMPLIFY_DIFF_DEPLOY"
+                Value: "false"
+              - 
+                Name: "AMPLIFY_MONOREPO_APP_ROOT"
+                Value: "Assignment2/frontend"
+            CustomRules: 
+              - 
+                Source: "/<*>"
+                Target: "/index.html"
+                Status: "404-200"
+            BuildSpec: |
+                version: 1
+                applications:
+                  - frontend:
+                      phases:
+                        build:
+                          commands: []
+                      artifacts:
+                        baseDirectory: /
+                        files:
+                          - '**/*'
+                      cache:
+                        paths: []
+                    appRoot: Assignment2/frontend
+                
+            EnableBranchAutoDeletion: false
+            AccessToken: "REPLACEME"
+            OauthToken: "REPLACEME"
+            CustomHeaders: ""
+
+    AmplifyBranch:
+        Type: "AWS::Amplify::Branch"
+        Properties:
+            BranchName: "main"
+            Stage: "PRODUCTION"
+            AppId: "d2sj1h9g0oeo1r"
+            EnablePullRequestPreview: false
+            EnableAutoBuild: true
+            EnablePerformanceMode: false
+
     XRayGroup:
         Type: "AWS::XRay::Group"
         Properties:
@@ -1300,10 +2430,17 @@ Resources:
         Type: "AWS::Lex::Bot"
         Properties:
             Name: !Sub "${ApiGatewayModel4}Search"
-            RoleArn: "arn:aws:iam::510257897386:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_CQFISCDKQDM"
+            RoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_CQFISCDKQDM"
             DataPrivacy: 
                 childDirected: false
             IdleSessionTTLInSeconds: 300
+
+    AppRunnerObservabilityConfiguration:
+        Type: "AWS::AppRunner::ObservabilityConfiguration"
+        Properties:
+            ObservabilityConfigurationName: "DefaultConfiguration"
+            TraceConfiguration: 
+                Vendor: "AWSXRAY"
 
     MemoryDBUser:
         Type: "AWS::MemoryDB::User"
