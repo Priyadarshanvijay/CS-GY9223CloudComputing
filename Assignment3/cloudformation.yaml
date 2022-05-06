@@ -1,0 +1,358 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: ""
+Parameters:
+    ENDPOINTNAME:
+        Type: "String"
+        Default: "sms-spam-classifier-mxnet-2022-04-28-05-24-42-737"
+
+Resources:
+    LambdaFunction:
+        Type: "AWS::Lambda::Function"
+        Properties:
+            Description: ""
+            Environment: 
+                Variables: 
+                    ENDPOINT_NAME: !Ref ENDPOINTNAME
+            FunctionName: "lf1"
+            Handler: "lambda_function.lambda_handler"
+            Architectures: 
+              - "x86_64"
+            Code: 
+                S3Bucket: "prod-04-2014-tasks"
+                S3Key: !Sub "/snapshots/${AWS::AccountId}/lf1-77948415-8c62-48be-8007-fba30989bd00"
+                S3ObjectVersion: "tS4e6TqWPTf.NfTohoIYZpnuBXBr1Ofx"
+            MemorySize: 128
+            Role: !GetAtt IAMRole4.Arn
+            Runtime: "python3.9"
+            Timeout: 183
+            TracingConfig: 
+                Mode: "PassThrough"
+            Layers: 
+              - !Sub "arn:aws:lambda:${AWS::Region}:336392948345:layer:AWSDataWrangler-Python39:5"
+            EphemeralStorage: 
+                Size: 512
+
+    LambdaFunction2:
+        Type: "AWS::Lambda::Function"
+        Properties:
+            Description: ""
+            FunctionName: "lf2-extra-credit"
+            Handler: "lambda_function.lambda_handler"
+            Architectures: 
+              - "x86_64"
+            Code: 
+                S3Bucket: "prod-04-2014-tasks"
+                S3Key: !Sub "/snapshots/${AWS::AccountId}/lf2-extra-credit-4ce84406-fcfc-4a08-802e-fc315f4d194c"
+                S3ObjectVersion: "78lMDAQBCmTocUZlveRQ2.kKGvbEBY7N"
+            MemorySize: 128
+            Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/service-role/${LambdaFunction}-role-zszlw9m4"
+            Runtime: "python3.9"
+            Timeout: 3
+            TracingConfig: 
+                Mode: "PassThrough"
+            EphemeralStorage: 
+                Size: 512
+
+    LambdaPermission:
+        Type: "AWS::Lambda::Permission"
+        Properties:
+            Action: "lambda:InvokeFunction"
+            FunctionName: !GetAtt LambdaFunction2.Arn
+            Principal: "events.amazonaws.com"
+            SourceArn: !GetAtt EventsRule.Arn
+
+    LambdaPermission2:
+        Type: "AWS::Lambda::Permission"
+        Properties:
+            Action: "lambda:InvokeFunction"
+            FunctionName: !GetAtt LambdaFunction.Arn
+            Principal: "s3.amazonaws.com"
+            SourceArn: !Sub "arn:aws:s3:::${S3Bucket2}"
+
+    LambdaLayerVersion:
+        Type: "AWS::Lambda::LayerVersion"
+        Properties:
+            Description: ""
+            CompatibleRuntimes: 
+              - "nodejs14.x"
+            LayerName: "aws-sdk-v3"
+            Content: 
+                S3Bucket: "prod-04-2014-layers"
+                S3Key: !Sub "/snapshots/${AWS::AccountId}/aws-sdk-v3-c991c556-ea91-4751-9ee8-56e6c127800c"
+
+    S3Bucket:
+        Type: "AWS::S3::Bucket"
+        Properties:
+            BucketName: "s3-0"
+            VersioningConfiguration: 
+                Status: "Enabled"
+
+    S3Bucket2:
+        Type: "AWS::S3::Bucket"
+        Properties:
+            BucketName: "b1-s1"
+            NotificationConfiguration: 
+                LambdaConfigurations: 
+                  - 
+                    Event: "s3:ObjectCreated:Put"
+                    Filter: 
+                        S3Key: 
+                            Rules: 
+                              - 
+                                Name: "Prefix"
+                                Value: ""
+                              - 
+                                Name: "Suffix"
+                                Value: ""
+                    Function: !GetAtt LambdaFunction.Arn
+
+    S3BucketPolicy:
+        Type: "AWS::S3::BucketPolicy"
+        Properties:
+            Bucket: !Ref S3Bucket2
+            PolicyDocument: 
+                Version: "2012-10-17"
+                Statement: 
+                  - 
+                    Sid: "Statement1"
+                    Effect: "Allow"
+                    Principal: 
+                        Service: "ses.amazonaws.com"
+                    Action: "s3:PutObject"
+                    Resource: !Sub "arn:aws:s3:::${S3Bucket2}/*"
+
+    SageMakerModel:
+        Type: "AWS::SageMaker::Model"
+        Properties:
+            ModelName: "sms-spam-classifier-mxnet-2022-05-05-21-08-16-796"
+            PrimaryContainer: 
+                Environment: 
+                    SAGEMAKER_CONTAINER_LOG_LEVEL: "20"
+                    SAGEMAKER_PROGRAM: "sms_spam_classifier_mxnet_script.py"
+                    SAGEMAKER_REGION: !Ref AWS::Region
+                    SAGEMAKER_SUBMIT_DIRECTORY: !Sub "s3://${S3Bucket}/sms-spam-classifier/code/sms-spam-classifier-mxnet-2022-05-05-21-05-00-259/source/sourcedir.tar.gz"
+                ModelDataUrl: !Sub "s3://${S3Bucket}/sms-spam-classifier/output/sms-spam-classifier-mxnet-2022-05-05-21-05-00-259/output/model.tar.gz"
+                Image: !Sub "520713654638.dkr.ecr.${AWS::Region}.amazonaws.com/sagemaker-mxnet:1.2.1-cpu-py3"
+            ExecutionRoleArn: !GetAtt IAMRole.Arn
+
+    SageMakerModel2:
+        Type: "AWS::SageMaker::Model"
+        Properties:
+            ModelName: "sms-spam-classifier-mxnet-2022-05-05-20-52-07-715"
+            PrimaryContainer: 
+                Environment: 
+                    SAGEMAKER_CONTAINER_LOG_LEVEL: "20"
+                    SAGEMAKER_PROGRAM: "sms_spam_classifier_mxnet_script.py"
+                    SAGEMAKER_REGION: !Ref AWS::Region
+                    SAGEMAKER_SUBMIT_DIRECTORY: !Sub "s3://${S3Bucket}/sms-spam-classifier/code/sms-spam-classifier-mxnet-2022-05-05-20-48-54-195/source/sourcedir.tar.gz"
+                ModelDataUrl: !Sub "s3://${S3Bucket}/sms-spam-classifier/output/sms-spam-classifier-mxnet-2022-05-05-20-48-54-195/output/model.tar.gz"
+                Image: !Sub "520713654638.dkr.ecr.${AWS::Region}.amazonaws.com/sagemaker-mxnet:1.2.1-cpu-py3"
+            ExecutionRoleArn: !GetAtt IAMRole.Arn
+
+    SageMakerModel3:
+        Type: "AWS::SageMaker::Model"
+        Properties:
+            ModelName: !Ref ENDPOINTNAME
+            PrimaryContainer: 
+                Environment: 
+                    SAGEMAKER_CONTAINER_LOG_LEVEL: "20"
+                    SAGEMAKER_PROGRAM: "sms_spam_classifier_mxnet_script.py"
+                    SAGEMAKER_REGION: !Ref AWS::Region
+                    SAGEMAKER_SUBMIT_DIRECTORY: !Sub "s3://${S3Bucket}/sms-spam-classifier/code/sms-spam-classifier-mxnet-2022-04-28-05-20-19-820/source/sourcedir.tar.gz"
+                ModelDataUrl: !Sub "s3://${S3Bucket}/sms-spam-classifier/output/sms-spam-classifier-mxnet-2022-04-28-05-20-19-820/output/model.tar.gz"
+                Image: !Sub "520713654638.dkr.ecr.${AWS::Region}.amazonaws.com/sagemaker-mxnet:1.2.1-cpu-py3"
+            ExecutionRoleArn: !GetAtt IAMRole.Arn
+
+    SageMakerEndpoint:
+        Type: "AWS::SageMaker::Endpoint"
+        Properties:
+            EndpointName: !Ref ENDPOINTNAME
+            EndpointConfigName: !Ref ENDPOINTNAME
+
+    SageMakerEndpointConfig:
+        Type: "AWS::SageMaker::EndpointConfig"
+        Properties:
+            EndpointConfigName: !Ref ENDPOINTNAME
+            ProductionVariants: 
+              - 
+                VariantName: "AllTraffic"
+                ModelName: !Ref ENDPOINTNAME
+                InitialInstanceCount: 1
+                InstanceType: "ml.t2.medium"
+                InitialVariantWeight: 1
+
+    SageMakerNotebookInstance:
+        Type: "AWS::SageMaker::NotebookInstance"
+        Properties:
+            NotebookInstanceName: "SageMaker-Tutorial"
+            InstanceType: "ml.t3.medium"
+            RoleArn: !GetAtt IAMRole.Arn
+            LifecycleConfigName: "lifecycle-management"
+            DirectInternetAccess: "Enabled"
+            VolumeSizeInGB: 5
+            RootAccess: "Enabled"
+
+    SageMakerNotebookInstanceLifecycleConfig:
+        Type: "AWS::SageMaker::NotebookInstanceLifecycleConfig"
+        Properties:
+            NotebookInstanceLifecycleConfigName: "lifecycle-management"
+            OnStart: 
+              - 
+                Content: "c2V0IC1lCgpFTlZJUk9OTUVOVD1teG5ldF9wMzYKTk9URUJPT0tfRklMRT0vaG9tZS9lYzItdXNlci9TYWdlTWFrZXIvc21sYW1iZGF3b3Jrc2hvcC90cmFpbmluZy9zbXNfc3BhbV9jbGFzc2lmaWVyX214bmV0LmlweW5iCgpzb3VyY2UgL2hvbWUvZWMyLXVzZXIvYW5hY29uZGEzL2Jpbi9hY3RpdmF0ZSAiJEVOVklST05NRU5UIiAmJiBwaXAgaW5zdGFsbCBwYW5kYXMKCmp1cHl0ZXIgbmJjb252ZXJ0ICIkTk9URUJPT0tfRklMRSIgLS10byBub3RlYm9vayAtLUV4ZWN1dGVQcmVwcm9jZXNzb3Iua2VybmVsX25hbWU9cHl0aG9uMyAtLWV4ZWN1dGUKCnNvdXJjZSAvaG9tZS9lYzItdXNlci9hbmFjb25kYTMvYmluL2RlYWN0aXZhdGUKCiMgUEFSQU1FVEVSUwpJRExFX1RJTUU9MTAgICMgMSBtaW51dGUKCmVjaG8gIkZldGNoaW5nIHRoZSBhdXRvc3RvcCBzY3JpcHQiCndnZXQgaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2F3cy1zYW1wbGVzL2FtYXpvbi1zYWdlbWFrZXItbm90ZWJvb2staW5zdGFuY2UtbGlmZWN5Y2xlLWNvbmZpZy1zYW1wbGVzL21hc3Rlci9zY3JpcHRzL2F1dG8tc3RvcC1pZGxlL2F1dG9zdG9wLnB5CgplY2hvICJTdGFydGluZyB0aGUgU2FnZU1ha2VyIGF1dG9zdG9wIHNjcmlwdCBpbiBjcm9uIgooY3JvbnRhYiAtbCAyPi9kZXYvbnVsbDsgZWNobyAiKi8xICogKiAqICogL3Vzci9iaW4vcHl0aG9uICRQV0QvYXV0b3N0b3AucHkgLS10aW1lICRJRExFX1RJTUUgLS1pZ25vcmUtY29ubmVjdGlvbnMiKSB8IGNyb250YWIgLQ=="
+
+    IAMRole:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/service-role/"
+            RoleName: "AmazonSageMaker-ExecutionRole-20220428T010127"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"sagemaker.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
+              - !Ref IAMManagedPolicy3
+            Description: "SageMaker execution role created from the SageMaker AWS Management Console."
+
+    IAMRole2:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/"
+            RoleName: "AWS-QuickSetup-StackSet-Local-AdministrationRole"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"cloudformation.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+
+    IAMRole3:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/"
+            RoleName: "AWS-QuickSetup-StackSet-Local-ExecutionRole"
+            AssumeRolePolicyDocument: !Sub "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::${AWS::AccountId}:role/${IAMRole2}\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - "arn:aws:iam::aws:policy/AdministratorAccess"
+
+    IAMRole4:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/service-role/"
+            RoleName: "lf1-role-zszlw9m4"
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns: 
+              - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+              - "arn:aws:iam::aws:policy/AmazonSESFullAccess"
+              - "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
+              - "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
+              - !Ref IAMManagedPolicy2
+
+    IAMManagedPolicy:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-d483f5a5-f579-4294-bb65-e6ec4c5ee25c"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${LambdaFunction}:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy2:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AWSLambdaBasicExecutionRole-e1ebeb26-69e1-4269-b800-1d22506d7974"
+            Path: "/service-role/"
+            PolicyDocument: !Sub |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "logs:CreateLogGroup",
+                            "Resource": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": [
+                                "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/lf1:*"
+                            ]
+                        }
+                    ]
+                }
+
+    IAMManagedPolicy3:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: "AmazonSageMaker-ExecutionPolicy-20220428T010127"
+            Path: "/service-role/"
+            PolicyDocument: |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:PutObject",
+                                "s3:DeleteObject",
+                                "s3:ListBucket"
+                            ],
+                            "Resource": [
+                                "arn:aws:s3:::*"
+                            ]
+                        }
+                    ]
+                }
+
+    EventsRule:
+        Type: "AWS::Events::Rule"
+        Properties:
+            Name: "daily-train-spam-filter"
+            ScheduleExpression: "rate(1 day)"
+            State: "ENABLED"
+            Targets: 
+              - 
+                Arn: !GetAtt LambdaFunction2.Arn
+                Id: "Id0f822733-3876-4397-9972-bd7c4c59e8b1"
+            EventBusName: "default"
+
+    SESReceiptRule:
+        Type: "AWS::SES::ReceiptRule"
+        Properties:
+            Rule: 
+                ScanEnabled: true
+                Recipients: 
+                  - "pv2109.ml"
+                  - "test@pv2109.ml"
+                Actions: 
+                  - 
+                    S3Action: 
+                        BucketName: !Ref S3Bucket2
+                Enabled: true
+                Name: "rule-1"
+                TlsPolicy: "Optional"
+            RuleSetName: "rs-1"
+
+    SESReceiptRuleSet:
+        Type: "AWS::SES::ReceiptRuleSet"
+        Properties:
+            RuleSetName: "rs-1"
+
